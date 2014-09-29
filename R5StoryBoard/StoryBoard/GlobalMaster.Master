@@ -1,0 +1,43 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="GlobalMaster.master.cs" Inherits="StoryBoard.GlobalMaster" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Story Board</title>
+    <script type='text/javascript' src="Scripts/jquery-1.11.1.min.js"></script>
+    <link rel='stylesheet' type='text/css' href="Css/StaticHeader.css" />
+    <script type='text/javascript' src="Scripts/x.js"></script>
+    <script type='text/javascript' src="Scripts/xtableheaderfixed.js"></script>
+    <script type='text/javascript' src='Scripts/knockout-3.2.0.js'></script>
+    <script type='text/javascript' src="Scripts/knockout.mapping.js"></script>
+    <script src="Scripts/jquery-ui.min.js"></script>
+    <link href="Css/jquery-ui.css" rel="stylesheet" />
+    <link href="Css/styles.css" rel="stylesheet" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+    <script type="text/javascript">
+       
+    </script>
+</head>
+<body>
+    <div style="margin: 0 auto;width:80%">
+       <h2>Welcome to Detailed Design StoryBoard</h2> 
+    <form id="form1" runat="server">
+        <div id='cssmenu'>
+            <ul>
+                <li runat="server" id="m1" class='active'><a href="AddPageDetails.aspx"><span>Page Overview</span></a></li>
+                <li runat="server" id="m2"><a href="AddDataElements.aspx"><span>Page Data Elements</span></a></li>
+                <li runat="server" id="m3" ><a href="ScreenImages.aspx"><span>Page Screenshots</span></a></li>
+                <li runat="server" id="m4" class='last'><a href="SearchElements.aspx"><span>Search Data Elements</span></a></li>
+            </ul>
+        </div>
+        <div>
+
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+    </form>
+  </div>
+</body>
+</html>

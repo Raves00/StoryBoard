@@ -1,0 +1,6 @@
+C:\HBE\Sandbox\R5StoryBoard\StoryBoard\bin\StoryBoard.dll.config
+C:\HBE\Sandbox\R5StoryBoard\StoryBoard\bin\StoryBoard.dll
+C:\HBE\Sandbox\R5StoryBoard\StoryBoard\bin\StoryBoard.pdb
+C:\HBE\Sandbox\R5StoryBoard\StoryBoard\obj\Debug\StoryBoard.csprojResolveAssemblyReference.cache
+C:\HBE\Sandbox\R5StoryBoard\StoryBoard\obj\Debug\StoryBoard.dll
+C:\HBE\Sandbox\R5StoryBoard\StoryBoard\obj\Debug\StoryBoard.pdb
