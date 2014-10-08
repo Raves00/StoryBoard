@@ -64,6 +64,7 @@
     <Content Include="GenerateReports.aspx" />
     <Content Include="Images\backbg.png" />
     <Content Include="Images\DeleteIcon.png" />
+    <Content Include="ImportExport.aspx" />
     <Content Include="ScreenImages.aspx" />
     <Content Include="Scripts\jquery-1.4.1.min.js" />
     <Content Include="Scripts\ScrollableGridPlugin.js" />
@@ -107,6 +108,13 @@
     </Compile>
     <Compile Include="GlobalMaster.Master.designer.cs">
       <DependentUpon>GlobalMaster.Master</DependentUpon>
+    </Compile>
+    <Compile Include="ImportExport.aspx.cs">
+      <DependentUpon>ImportExport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ImportExport.aspx.designer.cs">
+      <DependentUpon>ImportExport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScreenImages.aspx.cs">

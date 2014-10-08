@@ -10,6 +10,19 @@ namespace StoryBoard
 {
     public class DataMaster
     {
+        public static int YesNoMap(string temp) {
+            if (!string.IsNullOrEmpty(temp))
+            {
+                switch (temp.Trim())
+                {
+                    case "Yes": return 1; 
+                    case "No": return 2; 
+                    case "N/A": return  3; 
+                }
+            }
+            return 0;
+        }
+
         public static bool DeleteElement(int nElementMappingID)
         {
             bool issucess = false;
@@ -61,6 +74,78 @@ namespace StoryBoard
                 return null;
             }
 
+        }
+        
+        public static DataTable GetControlList()
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+                {
+                    using (SqlDataAdapter sda = new SqlDataAdapter())
+                    {
+                        using (SqlCommand cmd = new SqlCommand("Select ControlTypeDesc,ControlTypeID From ControlTypeMaster", sqlconn))
+                        {
+                            sda.SelectCommand = cmd;
+                            sda.Fill(ds);
+                        }
+                    }
+                }
+                return ds.Tables[0];
+            }
+            catch (Exception)
+            {
+                return null;
+            }       
+        }
+
+        public static DataTable GetStatusList()
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+                {
+                    using (SqlDataAdapter sda = new SqlDataAdapter())
+                    {
+                        using (SqlCommand cmd = new SqlCommand("Select StatusName,StatusID From StatusMaster", sqlconn))
+                        {
+                            sda.SelectCommand = cmd;
+                            sda.Fill(ds);
+                        }
+                    }
+                }
+                return ds.Tables[0];
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static DataTable GetRefTableList()
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+                {
+                    using (SqlDataAdapter sda = new SqlDataAdapter())
+                    {
+                        using (SqlCommand cmd = new SqlCommand("Select ReferenceTableName,ReferenceTableId From ReferenceTable", sqlconn))
+                        {
+                            sda.SelectCommand = cmd;
+                            sda.Fill(ds);
+                        }
+                    }
+                }
+                return ds.Tables[0];
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         internal static DataTable SearchElements(string strElementName, string strPage)
@@ -239,7 +324,7 @@ namespace StoryBoard
             }
         }
 
-        internal static void InsertPageElement(int nPageId, string strElementName, string strLength, int intControlType, int bIsRequired, string strReferenceTable, string strDisplayRule, string strValidations, string strValidationTrigger, string strErrorCode, int intStatus, int bIsKTAP, int bIsSNAP, int bIsMedicAid, string bIsOtherPrograms, string strDatabaseName, string strDatabaseFields, string strOpenQuestions, string strSSPDispName, string strWPDispName, string IAElemID)
+        internal static void InsertPageElement(int nPageId = 0, string strElementName = null, string strLength = null, int intControlType = 0, int bIsRequired = 0, string strReferenceTable = null, string strDisplayRule = null, string strValidations = null, string strValidationTrigger = null, string strErrorCode = null, int intStatus = 0, int bIsKTAP = 0, int bIsSNAP = 0, int bIsMedicAid = 0, string bIsOtherPrograms = null, string strDatabaseName = null, string strDatabaseFields = null, string strOpenQuestions = null, string strSSPDispName = null, string strWPDispName = null, string IAElemID = null)
         {
             int nLength = -1;
             int.TryParse(strLength, out nLength);

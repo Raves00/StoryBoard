@@ -58,6 +58,15 @@ namespace StoryBoard {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl m3;
         
         /// <summary>
+        /// m5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl m5;
+        
+        /// <summary>
         /// m4 control.
         /// </summary>
         /// <remarks>

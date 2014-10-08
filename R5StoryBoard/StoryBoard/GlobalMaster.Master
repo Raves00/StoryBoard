@@ -29,7 +29,8 @@
                 <li runat="server" id="m1" class='active'><a href="AddPageDetails.aspx"><span>Page Overview</span></a></li>
                 <li runat="server" id="m2"><a href="AddDataElements.aspx"><span>Page Data Elements</span></a></li>
                 <li runat="server" id="m3" ><a href="ScreenImages.aspx"><span>Page Screenshots</span></a></li>
-                <li runat="server" id="m4" class='last'><a href="SearchElements.aspx"><span>Search Data Elements</span></a></li>
+                <li runat="server" id="m5" ><a href="ImportExport.aspx"><span>Import/Export Data </span></a></li>
+                <li runat="server" id="m4" class='last'><a href="SearchElements.aspx"><span>Search Data Elements</span></a></li>                
             </ul>
         </div>
         <div>
