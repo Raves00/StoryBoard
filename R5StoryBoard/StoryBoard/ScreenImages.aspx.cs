@@ -22,7 +22,14 @@ namespace StoryBoard
         }
 
 
-
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            int roleid = (Session["User"] as User).RoleId;
+            if (roleid == 2)
+            {
+                btnUpload.Visible = false;
+            }
+        }
 
         private void UploadFile(HttpPostedFile PostedImage)
         {
@@ -86,6 +93,13 @@ namespace StoryBoard
                 Image img = e.Item.FindControl("imgImage") as Image;
                 string ImageId = Convert.ToString(DataBinder.Eval(e.Item.DataItem, "ImageID"));
                 img.ImageUrl = string.Format("GetScreenImage.ashx?Id={0}", ImageId);
+
+                ImageButton deletebtn = e.Item.FindControl("btnDelete") as ImageButton;
+                int roleid = (Session["User"] as User).RoleId;
+                if (roleid == 2)
+                {
+                    deletebtn.Visible = false;
+                }
             }
         }
 

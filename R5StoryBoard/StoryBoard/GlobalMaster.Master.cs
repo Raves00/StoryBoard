@@ -71,10 +71,22 @@ namespace StoryBoard
                     break;
             }
 
-            if (!IsPostBack)
+            if (Session["User"] == null)
+                Response.Redirect("Login.aspx");
+            else
             {
-
+                if (!IsPostBack)
+                {
+                    lblUserName.Text = (Session["User"] as User).FullName;
+                }
             }
+        }
+
+        protected void lnkLogOut_Click(object sender, EventArgs e)
+        {
+            Session.Abandon();
+            Session.Clear();
+            Response.Redirect("Login.aspx");
         }
     }
 }

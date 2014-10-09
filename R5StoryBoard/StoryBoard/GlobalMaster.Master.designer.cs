@@ -31,6 +31,24 @@ namespace StoryBoard {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
+        /// lblUserName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblUserName;
+        
+        /// <summary>
+        /// lnkLogOut control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lnkLogOut;
+        
+        /// <summary>
         /// m1 control.
         /// </summary>
         /// <remarks>
@@ -58,15 +76,6 @@ namespace StoryBoard {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl m3;
         
         /// <summary>
-        /// m5 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl m5;
-        
-        /// <summary>
         /// m4 control.
         /// </summary>
         /// <remarks>
@@ -74,6 +83,15 @@ namespace StoryBoard {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl m4;
+        
+        /// <summary>
+        /// m5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl m5;
         
         /// <summary>
         /// ContentPlaceHolder1 control.

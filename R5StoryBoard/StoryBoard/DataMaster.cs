@@ -10,23 +10,19 @@ namespace StoryBoard
 {
     public class DataMaster
     {
-        public static int YesNoMap(string temp) {
+        public static int YesNoMap(string temp)
+        {
             if (!string.IsNullOrEmpty(temp))
             {
                 switch (temp.Trim())
                 {
-                    case "Yes": return 1; 
-                    case "No": return 2; 
-                    case "N/A": return  3; 
+                    case "Yes": return 1;
+                    case "No": return 2;
+                    case "N/A": return 3;
                 }
             }
             return 0;
         }
-
-        uyttgugtyu
-
-
-
 
         public static bool DeleteElement(int nElementMappingID)
         {
@@ -80,7 +76,7 @@ namespace StoryBoard
             }
 
         }
-        
+
         public static DataTable GetControlList()
         {
             DataSet ds = new DataSet();
@@ -102,7 +98,7 @@ namespace StoryBoard
             catch (Exception)
             {
                 return null;
-            }       
+            }
         }
 
         public static DataTable GetStatusList()
@@ -295,37 +291,36 @@ namespace StoryBoard
 
             using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
             {
-                using (SqlDataAdapter sda = new SqlDataAdapter())
+
+                using (SqlCommand cmd = new SqlCommand("stp_UpdatePageElementDetails", sqlconn))
                 {
-                    using (SqlCommand cmd = new SqlCommand("stp_UpdatePageElementDetails", sqlconn))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@PageID", nPageId);
-                        cmd.Parameters.AddWithValue("@ElementID", nElementId);
-                        cmd.Parameters.AddWithValue("@ElementName", strElementName);
-                        cmd.Parameters.AddWithValue("@Length", strLength);
-                        cmd.Parameters.AddWithValue("@ControlType", intControlType);
-                        cmd.Parameters.AddWithValue("@IsRequired", bIsRequired);
-                        cmd.Parameters.AddWithValue("@ReferenceTable", strReferenceTable);
-                        cmd.Parameters.AddWithValue("@DisplayRule", strDisplayRule);
-                        cmd.Parameters.AddWithValue("@Validations", strValidations);
-                        cmd.Parameters.AddWithValue("@ValidationTrigger", strValidationTrigger);
-                        cmd.Parameters.AddWithValue("@ErrorCode", strErrorCode);
-                        cmd.Parameters.AddWithValue("@Status", intStatus);
-                        cmd.Parameters.AddWithValue("@KTAP", bIsKTAP);
-                        cmd.Parameters.AddWithValue("@SNAP", bIsSNAP);
-                        cmd.Parameters.AddWithValue("@MEDICAID", bIsMedicAid);
-                        cmd.Parameters.AddWithValue("@OtherPrograms", bIsOtherPrograms);
-                        cmd.Parameters.AddWithValue("@DatabaseTableName", strDatabaseName);
-                        cmd.Parameters.AddWithValue("@DatabaseTableFields", strDatabaseFields);
-                        cmd.Parameters.AddWithValue("@OpenQuestions", strOpenQuestions);
-                        cmd.Parameters.AddWithValue("@SSPDispName", strSSPDispName);
-                        cmd.Parameters.AddWithValue("@WPDispName", strWPDispName);
-                        cmd.Connection.Open();
-                        cmd.ExecuteNonQuery();
-                        cmd.Connection.Close();
-                    }
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@PageID", nPageId);
+                    cmd.Parameters.AddWithValue("@ElementID", nElementId);
+                    cmd.Parameters.AddWithValue("@ElementName", SBHelper.EncodeData(strElementName));
+                    cmd.Parameters.AddWithValue("@Length", SBHelper.EncodeData(strLength));
+                    cmd.Parameters.AddWithValue("@ControlType", intControlType);
+                    cmd.Parameters.AddWithValue("@IsRequired", bIsRequired);
+                    cmd.Parameters.AddWithValue("@ReferenceTable", SBHelper.EncodeData(strReferenceTable));
+                    cmd.Parameters.AddWithValue("@DisplayRule", SBHelper.EncodeData(strDisplayRule));
+                    cmd.Parameters.AddWithValue("@Validations", SBHelper.EncodeData(strValidations));
+                    cmd.Parameters.AddWithValue("@ValidationTrigger", SBHelper.EncodeData(strValidationTrigger));
+                    cmd.Parameters.AddWithValue("@ErrorCode", SBHelper.EncodeData(strErrorCode));
+                    cmd.Parameters.AddWithValue("@Status", intStatus);
+                    cmd.Parameters.AddWithValue("@KTAP", bIsKTAP);
+                    cmd.Parameters.AddWithValue("@SNAP", bIsSNAP);
+                    cmd.Parameters.AddWithValue("@MEDICAID", bIsMedicAid);
+                    cmd.Parameters.AddWithValue("@OtherPrograms", SBHelper.EncodeData(bIsOtherPrograms));
+                    cmd.Parameters.AddWithValue("@DatabaseTableName", SBHelper.EncodeData(strDatabaseName));
+                    cmd.Parameters.AddWithValue("@DatabaseTableFields", SBHelper.EncodeData(strDatabaseFields));
+                    cmd.Parameters.AddWithValue("@OpenQuestions", SBHelper.EncodeData(strOpenQuestions));
+                    cmd.Parameters.AddWithValue("@SSPDispName", SBHelper.EncodeData(strSSPDispName));
+                    cmd.Parameters.AddWithValue("@WPDispName", SBHelper.EncodeData(strWPDispName));
+                    cmd.Connection.Open();
+                    cmd.ExecuteNonQuery();
+                    cmd.Connection.Close();
                 }
+
             }
         }
 
@@ -336,39 +331,83 @@ namespace StoryBoard
 
             using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
             {
+
+                using (SqlCommand cmd = new SqlCommand("stp_InsertPageElementDetails", sqlconn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@PageID", nPageId);
+                    cmd.Parameters.AddWithValue("@ElementName", SBHelper.EncodeData(strElementName));
+                    cmd.Parameters.AddWithValue("@Length", SBHelper.EncodeData(strLength));
+                    cmd.Parameters.AddWithValue("@ControlType", intControlType);
+                    cmd.Parameters.AddWithValue("@IsRequired", bIsRequired);
+                    cmd.Parameters.AddWithValue("@ReferenceTable", SBHelper.EncodeData(strReferenceTable));
+                    cmd.Parameters.AddWithValue("@DisplayRule", SBHelper.EncodeData(strDisplayRule));
+                    cmd.Parameters.AddWithValue("@Validations", SBHelper.EncodeData(strValidations));
+                    cmd.Parameters.AddWithValue("@ValidationTrigger", SBHelper.EncodeData(strValidationTrigger));
+                    cmd.Parameters.AddWithValue("@ErrorCode", SBHelper.EncodeData(strErrorCode));
+                    cmd.Parameters.AddWithValue("@Status", intStatus);
+                    cmd.Parameters.AddWithValue("@KTAP", bIsKTAP);
+                    cmd.Parameters.AddWithValue("@SNAP", bIsSNAP);
+                    cmd.Parameters.AddWithValue("@MEDICAID", bIsMedicAid);
+                    cmd.Parameters.AddWithValue("@OtherPrograms", SBHelper.EncodeData(bIsOtherPrograms));
+                    cmd.Parameters.AddWithValue("@DatabaseTableName", SBHelper.EncodeData(strDatabaseName));
+                    cmd.Parameters.AddWithValue("@DatabaseTableFields", SBHelper.EncodeData(strDatabaseFields));
+                    cmd.Parameters.AddWithValue("@OpenQuestions", SBHelper.EncodeData(strOpenQuestions));
+                    cmd.Parameters.AddWithValue("@SSPDispName", SBHelper.EncodeData(strSSPDispName));
+                    cmd.Parameters.AddWithValue("@WPDispName", SBHelper.EncodeData(strWPDispName));
+                    cmd.Parameters.AddWithValue("@IAElemID", SBHelper.EncodeData(IAElemID));
+                    cmd.Connection.Open();
+                    cmd.ExecuteNonQuery();
+                    cmd.Connection.Close();
+                }
+
+            }
+        }
+
+
+        internal static DataSet ValidateModifiedElements(string xmlData)
+        {
+            using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
                 using (SqlDataAdapter sda = new SqlDataAdapter())
                 {
-                    using (SqlCommand cmd = new SqlCommand("stp_InsertPageElementDetails", sqlconn))
+                    using (SqlCommand cmd = new SqlCommand("stp_ValidateElementAssociation", sqlconn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@PageID", nPageId);
-                        cmd.Parameters.AddWithValue("@ElementName", strElementName);
-                        cmd.Parameters.AddWithValue("@Length", strLength);
-                        cmd.Parameters.AddWithValue("@ControlType", intControlType);
-                        cmd.Parameters.AddWithValue("@IsRequired", bIsRequired);
-                        cmd.Parameters.AddWithValue("@ReferenceTable", strReferenceTable);
-                        cmd.Parameters.AddWithValue("@DisplayRule", strDisplayRule);
-                        cmd.Parameters.AddWithValue("@Validations", strValidations);
-                        cmd.Parameters.AddWithValue("@ValidationTrigger", strValidationTrigger);
-                        cmd.Parameters.AddWithValue("@ErrorCode", strErrorCode);
-                        cmd.Parameters.AddWithValue("@Status", intStatus);
-                        cmd.Parameters.AddWithValue("@KTAP", bIsKTAP);
-                        cmd.Parameters.AddWithValue("@SNAP", bIsSNAP);
-                        cmd.Parameters.AddWithValue("@MEDICAID", bIsMedicAid);
-                        cmd.Parameters.AddWithValue("@OtherPrograms", bIsOtherPrograms);
-                        cmd.Parameters.AddWithValue("@DatabaseTableName", strDatabaseName);
-                        cmd.Parameters.AddWithValue("@DatabaseTableFields", strDatabaseFields);
-                        cmd.Parameters.AddWithValue("@OpenQuestions", strOpenQuestions);
-                        cmd.Parameters.AddWithValue("@SSPDispName", strSSPDispName);
-                        cmd.Parameters.AddWithValue("@WPDispName", strWPDispName);
-                        cmd.Parameters.AddWithValue("@IAElemID", IAElemID);
-                        cmd.Connection.Open();
-                        cmd.ExecuteNonQuery();
-                        cmd.Connection.Close();
+                        cmd.Parameters.AddWithValue("@strElementText", xmlData);
+                        sda.SelectCommand = cmd;
+                        DataSet ds = new DataSet();
+                        sda.Fill(ds);
+                        return ds;
                     }
                 }
             }
         }
 
+        internal static User ValidateUser(string strUserName, string strPassword)
+        {
+            User validatedUser = null;
+            using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
+                using (SqlDataAdapter sda = new SqlDataAdapter())
+                {
+                    using (SqlCommand cmd = new SqlCommand("stp_ValidateUser", sqlconn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@UserName", strUserName);
+                        cmd.Parameters.AddWithValue("@Password", strPassword);
+                        sqlconn.Open();
+                        SqlDataReader sdr = cmd.ExecuteReader();
+                        if (sdr.Read())
+                        {
+                            validatedUser = new User(sdr.GetFieldValue<int>(0), sdr.GetFieldValue<string>(1), sdr.GetFieldValue<string>(2), sdr.GetFieldValue<byte>(3));
+                        }
+
+                        sqlconn.Close();
+                        return validatedUser;
+                    }
+                }
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Xml.Linq;
 
 namespace StoryBoard
 {
@@ -293,25 +294,126 @@ namespace StoryBoard
         protected void btnAddExisting_Click(object sender, EventArgs e)
         {
             int nPageId = Convert.ToInt32(ddlPage.SelectedValue);
+            if (ValidateElementsAndSave())
+            {
+                (this.Page.Master as GlobalMaster).PageID = nPageId;
+                (this.Page.Master as GlobalMaster).ModuleType = Convert.ToInt32(ddlModule.SelectedValue);
+
+                Response.Redirect("AddDataElements.aspx?fas=1"); // add a flag for from add screen
+            }
+        }
+
+        private bool ValidateElementsAndSave()
+        {
+            bool isvalid = false;
+            int nPageId = Convert.ToInt32(ddlPage.SelectedValue);
             if (nPageId != -1)
             {
+                XDocument xdoc = new XDocument();
+                XElement xRootElement = new XElement("ElementSet");
                 for (int i = 0; i < gvPageElements.Rows.Count; i++)
                 {
                     CheckBox chkIsToBeadded = (CheckBox)gvPageElements.Rows[i].FindControl("chkSelect");
                     int elementId;
                     int.TryParse(Convert.ToString(gvPageElements.DataKeys[i].Values["ElementID"]), out elementId);
+                    string strElementName = (gvPageElements.Rows[i].FindControl("txtElementName") as TextBox).Text.Trim();
+                    string strLength = (gvPageElements.Rows[i].FindControl("txtLength") as TextBox).Text.Trim();
+                    int intControlType = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlControlType") as DropDownList).SelectedValue);
+                    int bIsRequired = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
+                    string strReferenceTable = (gvPageElements.Rows[i].FindControl("ddlReferenceTable") as DropDownList).SelectedValue.Trim();
+                    string strDisplayRule = (gvPageElements.Rows[i].FindControl("txtDisplayRule") as TextBox).Text.Trim();
+                    string strValidations = (gvPageElements.Rows[i].FindControl("txtValidations") as TextBox).Text.Trim();
+                    string strValidationTrigger = (gvPageElements.Rows[i].FindControl("txtValidationTrigger") as TextBox).Text.Trim();
+                    string strErrorCode = (gvPageElements.Rows[i].FindControl("txtErrorCode") as TextBox).Text.Trim();
+                    int intStatus = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlStatus") as DropDownList).SelectedValue);
+
+                    int bIsKTAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
+                    int bIsSNAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
+                    int bIsMedicAid = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
+                    string bIsOtherPrograms = (gvPageElements.Rows[i].FindControl("txtOtherPrograms") as TextBox).Text;
+                    string strDatabaseName = (gvPageElements.Rows[i].FindControl("txtDatabaseTableName") as TextBox).Text.Trim();
+                    string strDatabaseFields = (gvPageElements.Rows[i].FindControl("txtDatabaseFields") as TextBox).Text.Trim();
+                    string strOpenQuestions = (gvPageElements.Rows[i].FindControl("txtOpenQuestions") as TextBox).Text.Trim();
+
+                    string strSSPDispName = (gvPageElements.Rows[i].FindControl("txtSSPDispName") as TextBox).Text.Trim();
+
+                    string strWPDispName = (gvPageElements.Rows[i].FindControl("txtWPDisplayName") as TextBox).Text.Trim();
+
                     if (chkIsToBeadded.Checked)
                     {
-                        DataMaster.AddPageElementMapping(nPageId, elementId);
-                        lblErrorMessage.Text = "Mapping added successfully";
-                        lblErrorMessage.Visible = true;
+                        XElement elementroot = new XElement("Elements");
+                        elementroot.Add(new XElement("ElementID", elementId));
+                        elementroot.Add(new XElement("ElementName", strElementName));
+                        elementroot.Add(new XElement("Length", strLength));
+                        elementroot.Add(new XElement("ControlType", intControlType));
+                        elementroot.Add(new XElement("IsRequired", bIsRequired));
+                        elementroot.Add(new XElement("ReferenceTable", SBHelper.EncodeData(strReferenceTable)));
+                        elementroot.Add(new XElement("DisplayRule", SBHelper.EncodeData(strDisplayRule)));
+                        elementroot.Add(new XElement("Validations", SBHelper.EncodeData(strValidations)));
+                        elementroot.Add(new XElement("ValidationTrigger", SBHelper.EncodeData(strValidationTrigger)));
+                        elementroot.Add(new XElement("ErrorCode", SBHelper.EncodeData(strErrorCode)));
+                        elementroot.Add(new XElement("Status", intStatus));
+                        elementroot.Add(new XElement("KTAP", bIsKTAP));
+                        elementroot.Add(new XElement("SNAP", bIsSNAP));
+                        elementroot.Add(new XElement("MEDICAID", bIsMedicAid));
+                        elementroot.Add(new XElement("OtherPrograms", SBHelper.EncodeData(bIsOtherPrograms)));
+                        elementroot.Add(new XElement("DatabaseTableName", SBHelper.EncodeData(strDatabaseName)));
+                        elementroot.Add(new XElement("DatabaseTableFields", SBHelper.EncodeData(strDatabaseFields)));
+                        elementroot.Add(new XElement("OpenQuestions", SBHelper.EncodeData(strOpenQuestions)));
+                        elementroot.Add(new XElement("SSPDisplayName", SBHelper.EncodeData(strSSPDispName)));
+                        elementroot.Add(new XElement("WPDisplayName", SBHelper.EncodeData(strWPDispName)));
+                        xRootElement.Add(elementroot);
                     }
                 }
-                (this.Page.Master as GlobalMaster).PageID = nPageId;
-                (this.Page.Master as GlobalMaster).ModuleType = Convert.ToInt32(ddlModule.SelectedValue);
+                xdoc.Add(xRootElement);
+                ViewState["ElementData"] = xdoc.ToString();
+                DataSet dselemvalidationresult = DataMaster.ValidateModifiedElements(xdoc.ToString());
+                if (dselemvalidationresult.Tables[0].Rows.Count > 0)
+                {
+                    grdElemValidationResults.DataSource = dselemvalidationresult.Tables[0];
+                    grdElemValidationResults.DataBind();
+                    ShowConfirmationDialog();
+                    isvalid= false;
+                }
+                else
+                {
+                    int count = xdoc.Element("ElementSet").Elements("Elements").Count();
+                    for (int i = 0; i < count; i++)
+                    {
+                        int _elementid = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ElementID").Value);
+                        string strElementName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ElementName").Value;
+                        string strLength = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("Length").Value;
+                        int intControlType = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ControlType").Value);
+                        int bIsRequired = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("IsRequired").Value);
+                        string strReferenceTable = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ReferenceTable").Value;
+                        string strDisplayRule = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("DisplayRule").Value;
+                        string strValidations = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("Validations").Value;
+                        string strValidationTrigger = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ValidationTrigger").Value;
+                        string strErrorCode = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ErrorCode").Value;
+                        int intStatus = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("Status").Value);
+                        int bIsKTAP = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("KTAP").Value);
+                        int bIsSNAP = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SNAP").Value);
+                        int bIsMedicAid = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("MEDICAID").Value);
+                        string bIsOtherPrograms = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("OtherPrograms").Value;
+                        string strDatabaseName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("DatabaseTableName").Value;
+                        string strDatabaseFields = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("DatabaseTableFields").Value;
+                        string strOpenQuestions = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("OpenQuestions").Value;
+                        string strSSPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSPDisplayName").Value;
+                        string strWPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("WPDisplayName").Value;
+                        DataMaster.UpdatePageElement(nPageId, _elementid, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, "-1");
+                        DataMaster.AddPageElementMapping(nPageId, _elementid);
+                    }
+                    isvalid= true;
+                }
             }
+            return isvalid;
 
-            Response.Redirect("AddDataElements.aspx?fas=1"); // add a flag for from add screen
+        }
+
+        private void ShowConfirmationDialog()
+        {
+            ClientScriptManager cs = Page.ClientScript;
+            cs.RegisterStartupScript(this.GetType(), "ConfirmSave", "ConfirmElementUpdate()", true);
         }
 
         protected void ddlModule_SelectedIndexChanged(object sender, EventArgs e)
@@ -341,6 +443,50 @@ namespace StoryBoard
             ddlSearchPage.DataSource = dtPagesForModules;
             ddlSearchPage.DataBind();
             ddlSearchPage.Items.Insert(0, (new ListItem("--Select--", "-1")));
+        }
+
+        protected void btnConfirm_Click(object sender, EventArgs e)
+        {
+            if (ViewState["ElementData"] != null)
+            {
+                int nPageId = Convert.ToInt32(ddlPage.SelectedValue);
+                XDocument xdoc = XDocument.Parse(Convert.ToString(ViewState["ElementData"]));
+                int count = xdoc.Element("ElementSet").Elements("Elements").Count();
+                for (int i = 0; i < count; i++)
+                {
+                    int _elementid = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ElementID").Value);
+                    string strElementName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ElementName").Value;
+                    string strLength = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("Length").Value;
+                    int intControlType = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ControlType").Value);
+                    int bIsRequired = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("IsRequired").Value);
+                    string strReferenceTable = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ReferenceTable").Value;
+                    string strDisplayRule = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("DisplayRule").Value;
+                    string strValidations = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("Validations").Value;
+                    string strValidationTrigger = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ValidationTrigger").Value;
+                    string strErrorCode = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("ErrorCode").Value;
+                    int intStatus = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("Status").Value);
+                    int bIsKTAP = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("KTAP").Value);
+                    int bIsSNAP = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SNAP").Value);
+                    int bIsMedicAid = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("MEDICAID").Value);
+                    string bIsOtherPrograms = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("OtherPrograms").Value;
+                    string strDatabaseName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("DatabaseTableName").Value;
+                    string strDatabaseFields = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("DatabaseTableFields").Value;
+                    string strOpenQuestions = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("OpenQuestions").Value;
+                    string strSSPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSPDisplayName").Value;
+                    string strWPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("WPDisplayName").Value;
+                    DataMaster.UpdatePageElement(nPageId, _elementid, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, "-1");
+                    DataMaster.AddPageElementMapping(nPageId, _elementid);
+                }
+            }
+        }
+
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            int roleid = (Session["User"] as User).RoleId;
+            if (roleid == 2)
+            {
+                btnAddExisting.Visible = false;
+            }
         }
     }
 }

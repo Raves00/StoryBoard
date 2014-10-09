@@ -131,11 +131,12 @@ namespace StoryBoard
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@PageId", PageID);
                         sda.SelectCommand = cmd;
-                        DataSet ds = new DataSet();
+                        DataSet ds = new DataSet("ElementSet");
                         sda.Fill(ds);
-                        gvPageElements.DataSource = ds;
-                        gvPageElements.DataBind();
                         PageElementsTable = ds.Tables[0];
+                        PageElementsTable.TableName = "Elements";
+                        gvPageElements.DataSource = PageElementsTable;
+                        gvPageElements.DataBind();
                     }
                 }
             }
@@ -162,7 +163,8 @@ namespace StoryBoard
             }
         }
 
-        private void CopyExistingData(List<int> ItemsToBeDeleted = null)
+        private void 
+            CopyExistingData(List<int> ItemsToBeDeleted = null)
         {
             if (PageElementsTable != null)
             {
@@ -177,22 +179,22 @@ namespace StoryBoard
                     int intControlType = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlControlType") as DropDownList).SelectedValue);
                     int bIsRequired = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
                     string strReferenceTable = (gvPageElements.Rows[i].FindControl("ddlReferenceTable") as DropDownList).SelectedValue.Trim();
-                    string strDisplayRule = (gvPageElements.Rows[i].FindControl("txtDisplayRule") as TextBox).Text.Trim();
-                    string strValidations = (gvPageElements.Rows[i].FindControl("txtValidations") as TextBox).Text.Trim();
-                    string strValidationTrigger = (gvPageElements.Rows[i].FindControl("txtValidationTrigger") as TextBox).Text.Trim();
-                    string strErrorCode = (gvPageElements.Rows[i].FindControl("txtErrorCode") as TextBox).Text.Trim();
+                    string strDisplayRule =SBHelper.EncodeData( (gvPageElements.Rows[i].FindControl("txtDisplayRule") as TextBox).Text.Trim());
+                    string strValidations =SBHelper.EncodeData( (gvPageElements.Rows[i].FindControl("txtValidations") as TextBox).Text.Trim());
+                    string strValidationTrigger = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtValidationTrigger") as TextBox).Text.Trim());
+                    string strErrorCode = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtErrorCode") as TextBox).Text.Trim());
                     int intStatus = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlStatus") as DropDownList).SelectedValue);
 
                     int bIsKTAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlIsKTAP") as DropDownList).SelectedValue);
                     int bIsSNAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlIsSNAP") as DropDownList).SelectedValue);
                     int bIsMedicAid = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlIsMedicaid") as DropDownList).SelectedValue);
-                    string bIsOtherPrograms = (gvPageElements.Rows[i].FindControl("txtOtherPrograms") as TextBox).Text;
-                    string strDatabaseName = (gvPageElements.Rows[i].FindControl("txtDatabaseTableName") as TextBox).Text.Trim();
-                    string strDatabaseFields = (gvPageElements.Rows[i].FindControl("txtDatabaseFields") as TextBox).Text.Trim();
-                    string strOpenQuestions = (gvPageElements.Rows[i].FindControl("txtOpenQuestions") as TextBox).Text.Trim();
+                    string bIsOtherPrograms = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtOtherPrograms") as TextBox).Text);
+                    string strDatabaseName = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtDatabaseTableName") as TextBox).Text.Trim());
+                    string strDatabaseFields = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtDatabaseFields") as TextBox).Text.Trim());
+                    string strOpenQuestions = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtOpenQuestions") as TextBox).Text.Trim());
 
-                    string strSSPDispname = (gvPageElements.Rows[i].FindControl("txtSSPDispName") as TextBox).Text.Trim();
-                    string strWPDispname = (gvPageElements.Rows[i].FindControl("txtWPDisplayName") as TextBox).Text.Trim();
+                    string strSSPDispname = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtSSPDispName") as TextBox).Text.Trim());
+                    string strWPDispname = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtWPDisplayName") as TextBox).Text.Trim());
 
                     string IAElemID = (gvPageElements.Rows[i].FindControl("IAElemID") as TextBox).Text.Trim();
 
@@ -254,16 +256,16 @@ namespace StoryBoard
                 dcIsReq.DefaultValue = false;
 
                 DataColumn KTAP = new DataColumn("KTAP", typeof(int));
-                KTAP.DefaultValue = false;
+                KTAP.DefaultValue = 1;
 
                 DataColumn SNAP = new DataColumn("SNAP", typeof(int));
-                SNAP.DefaultValue = false;
+                SNAP.DefaultValue = 1;
 
                 DataColumn MEDICAID = new DataColumn("MEDICAID", typeof(int));
-                MEDICAID.DefaultValue = false;
+                MEDICAID.DefaultValue = 1;
 
-                DataColumn OtherPrograms = new DataColumn("OtherPrograms", typeof(string));
-                OtherPrograms.DefaultValue = false;
+                DataColumn OtherPrograms = new DataColumn("OtherPrograms", typeof(int));
+                OtherPrograms.DefaultValue = 1;
 
                 dtPageElements.Columns.Add(dcIsReq);
                 dtPageElements.Columns.Add("ReferenceTable", typeof(string));
@@ -416,86 +418,139 @@ namespace StoryBoard
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            if (ViewState["PageId"] != null)
+            if (ValidateElements())
             {
-                int nPageId = Convert.ToInt32(ViewState["PageId"]);
-                try
+
+                if (ViewState["PageId"] != null)
                 {
-                    for (int i = 0; i < gvPageElements.Rows.Count; i++)
+                    try
                     {
-                        int elementId;
-                        int.TryParse(Convert.ToString(gvPageElements.DataKeys[i].Values["ElementID"]), out elementId);
-
-                        string strElementName = (gvPageElements.Rows[i].FindControl("txtElementName") as TextBox).Text.Trim();
-                        string strLength = (gvPageElements.Rows[i].FindControl("txtLength") as TextBox).Text.Trim();
-                        int intControlType = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlControlType") as DropDownList).SelectedValue);
-                        int bIsRequired = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
-                        string strReferenceTable = (gvPageElements.Rows[i].FindControl("ddlReferenceTable") as DropDownList).SelectedValue.Trim();
-                        string strDisplayRule = (gvPageElements.Rows[i].FindControl("txtDisplayRule") as TextBox).Text.Trim();
-                        string strValidations = (gvPageElements.Rows[i].FindControl("txtValidations") as TextBox).Text.Trim();
-                        string strValidationTrigger = (gvPageElements.Rows[i].FindControl("txtValidationTrigger") as TextBox).Text.Trim();
-                        string strErrorCode = (gvPageElements.Rows[i].FindControl("txtErrorCode") as TextBox).Text.Trim();
-                        int intStatus = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlStatus") as DropDownList).SelectedValue);
-
-                        int bIsKTAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
-                        int bIsSNAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
-                        int bIsMedicAid = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
-                        string bIsOtherPrograms = (gvPageElements.Rows[i].FindControl("txtOtherPrograms") as TextBox).Text;
-                        string strDatabaseName = (gvPageElements.Rows[i].FindControl("txtDatabaseTableName") as TextBox).Text.Trim();
-                        string strDatabaseFields = (gvPageElements.Rows[i].FindControl("txtDatabaseFields") as TextBox).Text.Trim();
-                        string strOpenQuestions = (gvPageElements.Rows[i].FindControl("txtOpenQuestions") as TextBox).Text.Trim();
-
-                        string strSSPDispName = (gvPageElements.Rows[i].FindControl("txtSSPDispName") as TextBox).Text.Trim();
-
-                        string strWPDispName = (gvPageElements.Rows[i].FindControl("txtWPDisplayName") as TextBox).Text.Trim();
-                        string IAElemID = (gvPageElements.Rows[i].FindControl("IAElemID") as TextBox).Text.Trim();
-
-                        if (strElementName.Trim().Length > 0)
-                        {
-                            if (elementId == 0)
-                            {
-                                //insert
-
-                                DataMaster.InsertPageElement(nPageId, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, IAElemID);
-                            }
-                            else
-                            {
-                                //update
-                                DataMaster.UpdatePageElement(nPageId, elementId, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, IAElemID);
-                            }
-                        }
+                        CommitDataToDB();
                     }
+                    catch (Exception ex)
+                    {
+                        lblErrorMessage.Text = "Error occurred while saving data.";
+                        lblErrorMessage.Visible = true;
+                    }
+                    finally
+                    {
 
-                    lblErrorMessage.Text = "Data saved successfully.";
-                    lblErrorMessage.Visible = true;
-                    //if the user clicks submit again, it has to be update and not insert and hence we rebind it from database
-                    PopulateExistingDataElements(nPageId);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    lblErrorMessage.Text = "Error occurred while saving data.";
+                    //Page not selected
+                    lblErrorMessage.Text = "Please select a page.";
                     lblErrorMessage.Visible = true;
-                }
-                finally
-                {
+                    btnSubmit.Visible = false;
 
                 }
-            }
-            else
-            {
-                //Page not selected
-                lblErrorMessage.Text = "Please select a page.";
-                lblErrorMessage.Visible = true;
-                btnSubmit.Visible = false;
-
             }
 
         }
 
+        private void CommitDataToDB()
+        {
+            int nPageId = Convert.ToInt32(ViewState["PageId"]);
+            for (int i = 0; i < gvPageElements.Rows.Count; i++)
+            {
+                int elementId;
+                int.TryParse(Convert.ToString(gvPageElements.DataKeys[i].Values["ElementID"]), out elementId);
 
+                string strElementName = (gvPageElements.Rows[i].FindControl("txtElementName") as TextBox).Text.Trim();
+                string strLength = (gvPageElements.Rows[i].FindControl("txtLength") as TextBox).Text.Trim();
+                int intControlType = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlControlType") as DropDownList).SelectedValue);
+                int bIsRequired = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
+                string strReferenceTable = (gvPageElements.Rows[i].FindControl("ddlReferenceTable") as DropDownList).SelectedValue.Trim();
+                string strDisplayRule = (gvPageElements.Rows[i].FindControl("txtDisplayRule") as TextBox).Text.Trim();
+                string strValidations = (gvPageElements.Rows[i].FindControl("txtValidations") as TextBox).Text.Trim();
+                string strValidationTrigger = (gvPageElements.Rows[i].FindControl("txtValidationTrigger") as TextBox).Text.Trim();
+                string strErrorCode = (gvPageElements.Rows[i].FindControl("txtErrorCode") as TextBox).Text.Trim();
+                int intStatus = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlStatus") as DropDownList).SelectedValue);
 
+                int bIsKTAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
+                int bIsSNAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
+                int bIsMedicAid = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
+                string bIsOtherPrograms = (gvPageElements.Rows[i].FindControl("txtOtherPrograms") as TextBox).Text;
+                string strDatabaseName = (gvPageElements.Rows[i].FindControl("txtDatabaseTableName") as TextBox).Text.Trim();
+                string strDatabaseFields = (gvPageElements.Rows[i].FindControl("txtDatabaseFields") as TextBox).Text.Trim();
+                string strOpenQuestions = (gvPageElements.Rows[i].FindControl("txtOpenQuestions") as TextBox).Text.Trim();
 
+                string strSSPDispName = (gvPageElements.Rows[i].FindControl("txtSSPDispName") as TextBox).Text.Trim();
 
+                string strWPDispName = (gvPageElements.Rows[i].FindControl("txtWPDisplayName") as TextBox).Text.Trim();
+                string IAElemID = (gvPageElements.Rows[i].FindControl("IAElemID") as TextBox).Text.Trim();
+
+                if (strElementName.Trim().Length > 0)
+                {
+                    if (elementId == 0)
+                    {
+                        //insert
+
+                        DataMaster.InsertPageElement(nPageId, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, IAElemID);
+                    }
+                    else
+                    {
+                        //update
+                        DataMaster.UpdatePageElement(nPageId, elementId, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, IAElemID);
+                    }
+                }
+            }
+
+            lblErrorMessage.Text = "Data saved successfully.";
+            lblErrorMessage.Visible = true;
+            //if the user clicks submit again, it has to be update and not insert and hence we rebind it from database
+            PopulateExistingDataElements(nPageId);
+        }
+
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            int roleid = (Session["User"] as User).RoleId;
+            if (roleid == 2)
+            {
+                btnDelete.Visible = false;
+                ucSearch.ShowAddButton = false;
+                btnAddExisting.Visible = false;
+                btnSubmit.Visible = false;
+            }
+        }
+
+        private bool ValidateElements()
+        {
+            CopyExistingData(); //update the data set first
+            DataSet ds;
+            if (PageElementsTable.DataSet == null)
+            {
+                ds = new DataSet();
+                ds.Tables.Add(PageElementsTable);
+            }
+            else
+                ds = PageElementsTable.DataSet;
+
+            ds.DataSetName = "ElementSet";
+            ds.Tables[0].TableName = "Elements";
+            string xmlData = ds.GetXml();
+            DataSet validationresults = DataMaster.ValidateModifiedElements(xmlData);
+            if (validationresults.Tables[0].Rows.Count > 0)
+            {
+                grdElemValidationResults.DataSource = validationresults.Tables[0];
+                grdElemValidationResults.DataBind();
+                ShowConfirmationDialog();
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void ShowConfirmationDialog()
+        {
+            ClientScriptManager cs = Page.ClientScript;
+            cs.RegisterStartupScript(this.GetType(), "ConfirmSave", "ConfirmElementUpdate()", true);
+        }
+
+        
         protected void btnDelete_Click(object sender, EventArgs e)
         {
             List<int> lstItemsToBeDeleted = new List<int>();
@@ -539,6 +594,11 @@ namespace StoryBoard
         {
             //no action
 
+        }
+
+        protected void btnConfirm_Click(object sender, EventArgs e)
+        {
+            CommitDataToDB();
         }
     }
 }

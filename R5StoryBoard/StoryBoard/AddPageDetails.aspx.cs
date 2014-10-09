@@ -80,6 +80,16 @@ namespace StoryBoard
 
         }
 
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            int roleid = (Session["User"] as User).RoleId;
+            if (roleid == 2)
+            {
+                btnAddPageDetails.Visible = false;
+                ucSearchPage.ShowAddButton = false;
+            }
+        }
+
 
         protected void btnAddPageDetails_Click(object sender, EventArgs e)
         {
