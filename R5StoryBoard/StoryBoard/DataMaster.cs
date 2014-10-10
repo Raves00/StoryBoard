@@ -134,8 +134,9 @@ namespace StoryBoard
                 {
                     using (SqlDataAdapter sda = new SqlDataAdapter())
                     {
-                        using (SqlCommand cmd = new SqlCommand("Select ReferenceTableName,ReferenceTableId From ReferenceTable", sqlconn))
+                        using (SqlCommand cmd = new SqlCommand("stp_GetReferenceTables", sqlconn))
                         {
+                            cmd.CommandType = CommandType.StoredProcedure;
                             sda.SelectCommand = cmd;
                             sda.Fill(ds);
                         }
@@ -405,6 +406,44 @@ namespace StoryBoard
 
                         sqlconn.Close();
                         return validatedUser;
+                    }
+                }
+            }
+        }
+
+        internal static DataTable GetReferenceTableValues(int selectedRefTable)
+        {
+           using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
+                using (SqlDataAdapter sda = new SqlDataAdapter())
+                {
+                    using (SqlCommand cmd = new SqlCommand("stp_GetReferenceTableValuesForTable", sqlconn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@ReferenceTableNameId", selectedRefTable);
+                        sda.SelectCommand = cmd;
+                        DataSet ds = new DataSet();
+                        sda.Fill(ds);
+                        return ds.Tables[0];
+                    }
+                }
+            }
+        }
+        
+        internal static DataTable GetReferenceTableNamesWithvalues(int selectedRefTable)
+        {
+           using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
+                using (SqlDataAdapter sda = new SqlDataAdapter())
+                {
+                    using (SqlCommand cmd = new SqlCommand("stp_GetReferenceTableAttributes", sqlconn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@RefTableNameId", selectedRefTable);
+                        sda.SelectCommand = cmd;
+                        DataSet ds = new DataSet();
+                        sda.Fill(ds);
+                        return ds.Tables[0];
                     }
                 }
             }
