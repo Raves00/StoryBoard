@@ -16,6 +16,15 @@ namespace StoryBoard
         public event OnPageSelectionChanged PageSelectionChanged;
         public event EventHandler AddButtonClicked;
 
+        public bool ShowPgList
+        {
+            get { return ddlPageList.Visible; }
+            set
+            {
+                ddlPageList.Visible = value;
+                pg.Visible = false;
+            }
+        }
 
         public bool ShowAddButton
         {
@@ -23,10 +32,35 @@ namespace StoryBoard
             set { btnAdd.Visible = value; }
         }
 
+        public string ButtonText
+        {
+            get { return btnAdd.Text; }
+            set { btnAdd.Text = value; }
+        }
+
+        public string SelectedPageName
+        {
+            get
+            {
+                return ddlPageList.SelectedItem.Text;
+            }
+        }
+        //private bool _arrangeinline = false;
+        //public bool ArrangeInline
+        //{
+        //    get { return _arrangeinline; }
+        //    set {
+        //        _arrangeinline = value;
+        //        if (value)
+        //            ddlPageList.AutoPostBack = false;
+        //    }
+        //}
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
+                
                 SetModuleSelectionFromSession();
                 BindStoryBoardPages();
                 SetPageSelectionFromSession();
@@ -38,7 +72,21 @@ namespace StoryBoard
                     }
                 }
             }
+            //RenderAlignment();
         }
+
+        //private void RenderAlignment()
+        //{
+        //    if (ArrangeInline)
+        //    {
+        //        Label pagelabel = (Label)td_bottom_label.Controls[1];
+        //        DropDownList pageddl = (DropDownList)td_bottom_ctrl.Controls[1];
+        //        td_bottom_label.Controls.Clear();
+        //        td_bottom_ctrl.Controls.Clear();
+        //        td_top_label.Controls.Add(pagelabel);
+        //        td_top_ctrl.Controls.Add(pageddl);
+        //    }
+        //}
 
         private void SetPageSelectionFromSession()
         {

@@ -24,7 +24,7 @@ namespace StoryBoard
             return 0;
         }
 
-        public static bool DeleteElement(int nElementMappingID)
+        public static bool DeleteElement(int nElementMappingID,string strDeletedBy)
         {
             bool issucess = false;
             try
@@ -37,6 +37,7 @@ namespace StoryBoard
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
                             cmd.Parameters.AddWithValue("@PageElementMappingID", nElementMappingID);
+                            cmd.Parameters.AddWithValue("@DeletedBy", strDeletedBy);
                             cmd.Connection.Open();
                             cmd.ExecuteNonQuery();
                             cmd.Connection.Close();
@@ -171,7 +172,7 @@ namespace StoryBoard
 
         }
 
-        internal static void AddPageElementMapping(int nPageId, int elementId)
+        internal static void AddPageElementMapping(int nPageId, int elementId,string strUserName)
         {
             using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
             {
@@ -181,6 +182,7 @@ namespace StoryBoard
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@PageId", nPageId);
                     cmd.Parameters.AddWithValue("@ElementId", elementId);
+                    cmd.Parameters.AddWithValue("@MappingAddedBy", strUserName);
                     cmd.Connection.Open();
                     cmd.ExecuteNonQuery();
                     cmd.Connection.Close();
@@ -317,6 +319,7 @@ namespace StoryBoard
                     cmd.Parameters.AddWithValue("@OpenQuestions", SBHelper.EncodeData(strOpenQuestions));
                     cmd.Parameters.AddWithValue("@SSPDispName", SBHelper.EncodeData(strSSPDispName));
                     cmd.Parameters.AddWithValue("@WPDispName", SBHelper.EncodeData(strWPDispName));
+                    cmd.Parameters.AddWithValue("@User", HttpContext.Current.Session["User"] != null ? ((User)HttpContext.Current.Session["User"]).UserName : "");
                     cmd.Connection.Open();
                     cmd.ExecuteNonQuery();
                     cmd.Connection.Close();
@@ -357,6 +360,48 @@ namespace StoryBoard
                     cmd.Parameters.AddWithValue("@SSPDispName", SBHelper.EncodeData(strSSPDispName));
                     cmd.Parameters.AddWithValue("@WPDispName", SBHelper.EncodeData(strWPDispName));
                     cmd.Parameters.AddWithValue("@IAElemID", SBHelper.EncodeData(IAElemID));
+                    cmd.Parameters.AddWithValue("@User", HttpContext.Current.Session["User"]!=null ? ((User)HttpContext.Current.Session["User"]).UserName: "");
+                    cmd.Connection.Open();
+                    cmd.ExecuteNonQuery();
+                    cmd.Connection.Close();
+                }
+
+            }
+        }
+
+        internal static void InsertPageElementFromExcel(int nPageId = 0, string strElementName = null, string strLength = null, int intControlType = 0, int bIsRequired = 0, string strReferenceTable = null, string strDisplayRule = null, string strValidations = null, string strValidationTrigger = null, string strErrorCode = null, int intStatus = 0, int bIsKTAP = 0, int bIsSNAP = 0, int bIsMedicAid = 0, string bIsOtherPrograms = null, string strDatabaseName = null, string strDatabaseFields = null, string strOpenQuestions = null, string strSSPDispName = null, string strWPDispName = null, string IAElemID = null)
+        {
+            int nLength = -1;
+            int.TryParse(strLength, out nLength);
+
+            using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("stp_InsertPageElementDetailsFromExcel", sqlconn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@PageID", nPageId);
+                    cmd.Parameters.AddWithValue("@ElementName", SBHelper.EncodeData(strElementName));
+                    cmd.Parameters.AddWithValue("@Length", SBHelper.EncodeData(strLength));
+                    cmd.Parameters.AddWithValue("@ControlType", intControlType);
+                    cmd.Parameters.AddWithValue("@IsRequired", bIsRequired);
+                    cmd.Parameters.AddWithValue("@ReferenceTable", SBHelper.EncodeData(strReferenceTable));
+                    cmd.Parameters.AddWithValue("@DisplayRule", SBHelper.EncodeData(strDisplayRule));
+                    cmd.Parameters.AddWithValue("@Validations", SBHelper.EncodeData(strValidations));
+                    cmd.Parameters.AddWithValue("@ValidationTrigger", SBHelper.EncodeData(strValidationTrigger));
+                    cmd.Parameters.AddWithValue("@ErrorCode", SBHelper.EncodeData(strErrorCode));
+                    cmd.Parameters.AddWithValue("@Status", intStatus);
+                    cmd.Parameters.AddWithValue("@KTAP", bIsKTAP);
+                    cmd.Parameters.AddWithValue("@SNAP", bIsSNAP);
+                    cmd.Parameters.AddWithValue("@MEDICAID", bIsMedicAid);
+                    cmd.Parameters.AddWithValue("@OtherPrograms", SBHelper.EncodeData(bIsOtherPrograms));
+                    cmd.Parameters.AddWithValue("@DatabaseTableName", SBHelper.EncodeData(strDatabaseName));
+                    cmd.Parameters.AddWithValue("@DatabaseTableFields", SBHelper.EncodeData(strDatabaseFields));
+                    cmd.Parameters.AddWithValue("@OpenQuestions", SBHelper.EncodeData(strOpenQuestions));
+                    cmd.Parameters.AddWithValue("@SSPDispName", SBHelper.EncodeData(strSSPDispName));
+                    cmd.Parameters.AddWithValue("@WPDispName", SBHelper.EncodeData(strWPDispName));
+                    cmd.Parameters.AddWithValue("@IAElemID", SBHelper.EncodeData(IAElemID));
+                    cmd.Parameters.AddWithValue("@User", HttpContext.Current.Session["User"] != null ? ((User)HttpContext.Current.Session["User"]).UserName : "");
+                  
                     cmd.Connection.Open();
                     cmd.ExecuteNonQuery();
                     cmd.Connection.Close();

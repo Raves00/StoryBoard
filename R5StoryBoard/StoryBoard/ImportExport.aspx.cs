@@ -19,19 +19,9 @@ namespace StoryBoard
         string Sheet1 = ConfigurationManager.AppSettings["Sheet1Const"];
         string Sheet2 = ConfigurationManager.AppSettings["Sheet2Const"];
         string FolderPath = ConfigurationManager.AppSettings["FolderPath"];
-        
+
         protected void Page_Init(object sender, EventArgs e)
         {
-            ucSearch.PageSelectionChanged += ucSearch_PageSelectionChanged;
-        }
-
-        void ucSearch_PageSelectionChanged(int PageID)
-        {
-            if (PageID != -1)
-            {
-                ViewState["PageId"] = PageID;
-                lblErrorMessage.Visible = false;
-            }
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -43,15 +33,21 @@ namespace StoryBoard
         {
             if (FileUpload1.HasFile)
             {
-                //string FileName = Path.GetFileName(FileUpload1.PostedFile.FileName);
-                //string Extension = Path.GetExtension(FileUpload1.PostedFile.FileName);
+                string FileName = Path.GetFileName(FileUpload1.PostedFile.FileName);
+                string Extension = Path.GetExtension(FileUpload1.PostedFile.FileName);
 
-                //string FilePath = Server.MapPath(FolderPath + FileName);
-                //FileUpload1.SaveAs(FilePath);
+                string FilePath = Server.MapPath(FolderPath + FileName);
+                FileUpload1.SaveAs(FilePath);
+                Import_To_Grid(FilePath, Extension);
             }
-            string Extension = ".xlsx";
-            string FilePath = "C:\\Users\\rmaurya\\Documents\\GitHub\\StoryBoard\\R5StoryBoard\\StoryBoard\\Files\\16_DC_Individual Education.xlsx";
-            Import_To_Grid(FilePath, Extension);
+            else
+            {
+                lblErrorMessage.Visible = true;
+                lblErrorMessage.ForeColor = System.Drawing.Color.Red;
+                lblErrorMessage.Text = "Please select a file to upload";
+            }
+            //string Extension = ".xlsx";
+            //string FilePath = "C:\\Users\\rmaurya\\Documents\\GitHub\\StoryBoard\\R5StoryBoard\\StoryBoard\\Files\\Utilization.xlsx";
 
         }
 
@@ -81,46 +77,17 @@ namespace StoryBoard
             dtExcelSchema = connExcel.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 
             //Populate Page Details
-            dt = new DataTable();
+            DataTable dtPg = new DataTable();
             cmdExcel.CommandText = "SELECT * From [" + Sheet1 + "]";
             oda.SelectCommand = cmdExcel;
-            oda.Fill(dt);
-            PopulatePage(dt);
+            oda.Fill(dtPg);
 
             dt = new DataTable();
             cmdExcel.CommandText = "SELECT * From [" + Sheet2 + "]";
             oda.SelectCommand = cmdExcel;
             oda.Fill(dt);
 
-            PopulateElements(dt);
-
-            //foreach (DataRow rw in dtExcelSchema.Rows)
-            //{
-            //    string SheetName = rw["TABLE_NAME"].ToString();
-
-            //    //Page Sheet
-            //    if (SheetName.Equals(Sheet1))
-            //    {
-            //        dt = new DataTable();
-            //        cmdExcel.CommandText = "SELECT * From [" + Sheet1 + "]";
-            //        oda.SelectCommand = cmdExcel;
-            //        oda.Fill(dt);
-
-            //        PopulatePage(dt);
-            //    }
-
-            //    //Elements Sheet
-            //    if (SheetName.Equals(Sheet2))
-            //    {
-            //        dt = new DataTable();
-            //        cmdExcel.CommandText = "SELECT * From [" + Sheet2 + "]";
-            //        oda.SelectCommand = cmdExcel;
-            //        oda.Fill(dt);
-
-            //        PopulateElements(dt);
-
-            //    }
-            //}
+            PopulateElements(dt, dtPg);
 
             connExcel.Close();
         }
@@ -140,12 +107,14 @@ namespace StoryBoard
                     cmd.Parameters.AddWithValue("@Activity", (dt.Rows[3].ItemArray[1]).ToString());
                     cmd.Parameters.AddWithValue("@Programs", (dt.Rows[4].ItemArray[1]).ToString());
                     cmd.Parameters.AddWithValue("@Module", ucSearch.ModuleId);
+                    cmd.Parameters.AddWithValue("@User", HttpContext.Current.Session["User"] != null ? ((User)HttpContext.Current.Session["User"]).UserName : "");
                     cmd.Connection.Open();
                     nStatus = Convert.ToInt32(cmd.ExecuteScalar());
                     cmd.Connection.Close();
                     if (nStatus == 0)
                     {
                         lblErrorMessage.Visible = true;
+                        lblErrorMessage.ForeColor = System.Drawing.Color.Red;
                         lblErrorMessage.Text = string.Format(" Page with name '{0}' already exists", (dt.Rows[0].ItemArray[1]).ToString());
                     }
                     else
@@ -159,14 +128,17 @@ namespace StoryBoard
             }
         }
 
-        private void PopulateElements(DataTable dt)
+        private void PopulateElements(DataTable dt, DataTable dtPg)
         {
             //Validations - control type,Status,ref table
             DataTable dtCtrl = DataMaster.GetControlList();
             DataTable dtStatus = DataMaster.GetStatusList();
             DataTable dtRef = DataMaster.GetRefTableList();
             StringBuilder err = new StringBuilder();
+            StringBuilder errRef = new StringBuilder();
+
             bool invalid = false;
+            bool refinvalid = false;
 
             #region Validations
             foreach (DataRow rw in dt.Rows)
@@ -193,32 +165,33 @@ namespace StoryBoard
                 }
 
                 string reft = rw.ItemArray[5].ToString().Replace(" ", ""); // Remove White spaces 
-                if (dtRef.Select("ReferenceTableName = '" + reft + "'").Length == 0 & !string.IsNullOrEmpty(reft))
+
+                if (dtRef.Select("ReferenceTableName = '" + reft + "'").Length == 0 & !string.IsNullOrEmpty(reft) & !reft.Equals("N/A"))
                 {
-                    invalid = true;
-                    if (!err.ToString().Contains(reft))
+                    refinvalid = true;
+                    if (!errRef.ToString().Contains(reft))
                     {
-                        err.Append(reft).Append(" is not a reference table").Append("<br/>");
+                        errRef.Append(reft).Append(" is not a reference table").Append("<br/>");
                     }
                 }
 
 
-                string temp = rw.ItemArray[11].ToString();
-                if (DataMaster.YesNoMap(temp) == 0) 
+                string temp = rw.ItemArray[12].ToString().Replace(" ", "");
+                if (DataMaster.YesNoMap(temp) == 0 & !string.IsNullOrEmpty(temp))
                 {
                     invalid = true;
                     err.Append(temp).Append(" is not a valid value for KTAP").Append("<br/>");
                 }
 
-                temp = rw.ItemArray[12].ToString();
-                if (DataMaster.YesNoMap(temp) == 0)
+                temp = rw.ItemArray[13].ToString().Replace(" ", "");
+                if (DataMaster.YesNoMap(temp) == 0 & !string.IsNullOrEmpty(temp))
                 {
                     invalid = true;
                     err.Append(temp).Append(" is not a valid value for SNAP").Append("<br/>");
                 }
 
-                temp = rw.ItemArray[13].ToString();
-                if (DataMaster.YesNoMap(temp) == 0)
+                temp = rw.ItemArray[14].ToString().Replace(" ", "");
+                if (DataMaster.YesNoMap(temp) == 0 & !string.IsNullOrEmpty(temp))
                 {
                     invalid = true;
                     err.Append(temp).Append(" is not a valid value for MedicAid").Append("<br/>");
@@ -230,6 +203,7 @@ namespace StoryBoard
             {
                 err.Append("Please make corrections and try again.");
                 lblErrorMessage.Visible = true;
+                lblErrorMessage.ForeColor = System.Drawing.Color.Red;
                 lblErrorMessage.Text = err.ToString();
                 return;
             }
@@ -237,6 +211,7 @@ namespace StoryBoard
             #region insert elements
             else //Insert Elements
             {
+                PopulatePage(dtPg);
                 DataTable dtSearchResults = DataMaster.SearchElements("", "-1");
                 foreach (DataRow dr in dt.Rows)
                 {
@@ -245,7 +220,7 @@ namespace StoryBoard
 
                     if (!string.IsNullOrEmpty(elName))
                     {
-                        DataRow[] rows = dtSearchResults.Select("ElementName = '" + elName + "'");
+                        DataRow[] rows = dtSearchResults.Select(string.Format("ElementName = '{0}'", elName.Replace("'", "''")));
                         if (rows.Length == 0) //Insert element
                         {
                             if (ViewState["PageId"] != null)
@@ -257,7 +232,7 @@ namespace StoryBoard
                                 temp = dr.ItemArray[2].ToString();
                                 string strLength = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
 
-                                temp = dr.ItemArray[3].ToString().Replace(" ", "");
+                                temp = dr.ItemArray[3].ToString().Replace(" ", "").Replace("'", "''");
                                 int intControlType = (!string.IsNullOrEmpty(temp)) ?
                                     Convert.ToInt32(dtCtrl.Select("ControlTypeDesc = '" + temp + "'")[0].ItemArray[1].ToString().Trim()) : 0;
 
@@ -265,9 +240,16 @@ namespace StoryBoard
                                 int bIsRequired = DataMaster.YesNoMap(temp);
 
                                 temp = dr.ItemArray[5].ToString();
-                                string strReferenceTable = (!string.IsNullOrEmpty(temp)) ?
-                                    (dtRef.Select("ReferenceTableName = '" + temp + "'")[0].ItemArray[1].ToString().Trim()) : string.Empty;
+                                string strReferenceTable = "-1";
+                                if ((!string.IsNullOrEmpty(temp) & !temp.Equals("N/A")))
+                                {
+                                    DataRow[] drcollection = dtRef.Select(string.Format("ReferenceTableName = '{0}'", temp.Replace("'", "''")));
 
+                                    if (drcollection.Count() > 0)
+                                        strReferenceTable = (dtRef.Select(string.Format("ReferenceTableName = '{0}'", temp.Replace("'", "''")))[0].ItemArray[0].ToString().Trim());
+                                    else
+                                        strReferenceTable = "-1";
+                                }
                                 temp = dr.ItemArray[6].ToString();
                                 string strDisplayRule = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
 
@@ -282,39 +264,47 @@ namespace StoryBoard
 
                                 temp = dr.ItemArray[10].ToString();
                                 int intStatus = (!string.IsNullOrEmpty(temp)) ?
-                                    Convert.ToInt32(dtStatus.Select("StatusName = '" + temp + "'")[0].ItemArray[1].ToString().Trim()) : 0;
-
-                                temp = dr.ItemArray[11].ToString();
-                                int bIsKTAP = DataMaster.YesNoMap(temp);
+                                    Convert.ToInt32(dtStatus.Select(string.Format("StatusName = '{0}'", temp.Replace("'", "''")))[0].ItemArray[1].ToString().Trim()) : 0;
 
                                 temp = dr.ItemArray[12].ToString();
-                                int bIsSNAP = DataMaster.YesNoMap(temp);
+                                int bIsKTAP = DataMaster.YesNoMap(temp);
 
                                 temp = dr.ItemArray[13].ToString();
-                                int bIsMedicAid = DataMaster.YesNoMap(temp);
+                                int bIsSNAP = DataMaster.YesNoMap(temp);
 
                                 temp = dr.ItemArray[14].ToString();
-                                string bIsOtherPrograms = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
+                                int bIsMedicAid = DataMaster.YesNoMap(temp);
 
                                 temp = dr.ItemArray[15].ToString();
-                                string strDatabaseName = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
+                                string bIsOtherPrograms = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
 
                                 temp = dr.ItemArray[16].ToString();
-                                string strDatabaseFields = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
+                                string strDatabaseName = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
 
                                 temp = dr.ItemArray[17].ToString();
+                                string strDatabaseFields = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
+
+                                temp = dr.ItemArray[18].ToString();
                                 string strOpenQuestions = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
 
                                 string strSSPDispName = elName;
                                 string strWPDispName = elName;
 
+                                if (dr.ItemArray.Length > 18)
+                                {
+                                    temp = dr.ItemArray[19].ToString();
+                                    strSSPDispName = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
+                                    strWPDispName = strSSPDispName;
+                                }
+
                                 IAElemID = "0";
-                                DataMaster.InsertPageElement(nPageId, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, IAElemID);
+                                DataMaster.InsertPageElementFromExcel(nPageId, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, IAElemID);
                             }
                             else
                             {
                                 lblErrorMessage.Visible = true;
-                                lblErrorMessage.Text = "Please select a page and module";
+                                lblErrorMessage.ForeColor = System.Drawing.Color.Red;
+                                lblErrorMessage.Text = "Page already exists";
                             }
                         }
                         else //pick first element ID
@@ -324,13 +314,32 @@ namespace StoryBoard
                             if (ViewState["PageId"] != null)
                             {
                                 int nPgId = Convert.ToInt32(ViewState["PageId"]);
-                                DataMaster.InsertPageElement(nPageId: nPgId, IAElemID: ElemID);
+                                DataMaster.InsertPageElementFromExcel(nPageId: nPgId, IAElemID: ElemID);
                             }
                             else
                             {
                                 lblErrorMessage.Visible = true;
-                                lblErrorMessage.Text = "Please select a page and module";
+                                lblErrorMessage.ForeColor = System.Drawing.Color.Red;
+                                lblErrorMessage.Text = "Page already exists";
                             }
+                        }
+                    }
+
+                }
+
+                if (refinvalid == true)
+                {
+                    using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+                    {
+                        using (SqlCommand cmd = new SqlCommand("stp_InsertError", sqlconn))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@PageName", dt.Rows[0].ItemArray[1].ToString());
+                            cmd.Parameters.AddWithValue("@Module", ucSearch.ModuleId);
+                            cmd.Parameters.AddWithValue("@Message", errRef.ToString());
+                            cmd.Connection.Open();
+                            cmd.ExecuteNonQuery();
+                            cmd.Connection.Close();
                         }
                     }
 

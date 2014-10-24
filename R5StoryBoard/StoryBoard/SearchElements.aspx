@@ -159,7 +159,7 @@
                                     <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ValidationGroup="submit" ControlToValidate="txtElementName" Display="Dynamic" ErrorMessage="*" ForeColor="Red"></asp:RequiredFieldValidator>
                                 </td>
                                 <td>
-                                    <asp:TextBox ID="txtElementName" onchange="OpenSuggest(this);" CssClass="ElementName" runat="server" Text='<%# Bind("ElementName") %>' ValidationGroup="submit" TextMode="MultiLine"></asp:TextBox>
+                                    <asp:TextBox ID="txtElementName" onchange="OpenSuggest(this);" CssClass="ElementName" runat="server" Text='<%# StoryBoard.SBHelper.DecodeData(Convert.ToString(DataBinder.Eval(Container.DataItem,"ElementName"))) %>'  ValidationGroup="submit" TextMode="MultiLine"></asp:TextBox>
                                 </td>
                             </tr>
                         </table>
@@ -197,9 +197,9 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Reference Table" SortExpression="ReferenceTable">
                     <ItemTemplate>
-                        <asp:DropDownList ID="ddlReferenceTable" DataTextField="ReferenceTableName" DataValueField="ReferenceTableCode" runat="server" CssClass="ReferenceTable">
+                        <asp:DropDownList ID="ddlReferenceTable" DataTextField="ReferenceTableName" DataValueField="ReferenceTableNameId" AppendDataBoundItems="true" runat="server" CssClass="ReferenceTable">
+                            <asp:ListItem Text="N/A" Value="-1"></asp:ListItem>
                         </asp:DropDownList>
-
                     </ItemTemplate>
 
                 </asp:TemplateField>

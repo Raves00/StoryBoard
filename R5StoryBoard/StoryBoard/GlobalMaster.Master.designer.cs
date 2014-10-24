@@ -49,6 +49,15 @@ namespace StoryBoard {
         protected global::System.Web.UI.WebControls.LinkButton lnkLogOut;
         
         /// <summary>
+        /// lstMenu control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl lstMenu;
+        
+        /// <summary>
         /// m1 control.
         /// </summary>
         /// <remarks>
@@ -92,6 +101,33 @@ namespace StoryBoard {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl m5;
+        
+        /// <summary>
+        /// m6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl m6;
+        
+        /// <summary>
+        /// m7 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl m7;
+        
+        /// <summary>
+        /// m8 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl m8;
         
         /// <summary>
         /// ContentPlaceHolder1 control.

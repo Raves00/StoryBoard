@@ -10,96 +10,69 @@
 namespace StoryBoard {
     
     
-    public partial class SearchPage {
+    public partial class Login {
         
         /// <summary>
-        /// ScriptManager1 control.
+        /// login control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.ScriptManager ScriptManager1;
+        protected global::System.Web.UI.HtmlControls.HtmlForm login;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// rfv_UserName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_UserName;
         
         /// <summary>
-        /// ddlModule control.
+        /// login_username control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlModule;
+        protected global::System.Web.UI.WebControls.TextBox login_username;
         
         /// <summary>
-        /// td_top_label control.
+        /// rfv_Password control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableCell td_top_label;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfv_Password;
         
         /// <summary>
-        /// td_top_ctrl control.
+        /// login_password control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableCell td_top_ctrl;
+        protected global::System.Web.UI.WebControls.TextBox login_password;
         
         /// <summary>
-        /// td_bottom_label control.
+        /// LoginError control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableCell td_bottom_label;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl LoginError;
         
         /// <summary>
-        /// pg control.
+        /// btnLogin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label pg;
-        
-        /// <summary>
-        /// td_bottom_ctrl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableCell td_bottom_ctrl;
-        
-        /// <summary>
-        /// ddlPageList control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPageList;
-        
-        /// <summary>
-        /// btnAdd control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAdd;
+        protected global::System.Web.UI.WebControls.Button btnLogin;
     }
 }

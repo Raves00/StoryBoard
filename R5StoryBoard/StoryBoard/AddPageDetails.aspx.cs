@@ -128,6 +128,7 @@ namespace StoryBoard
                     cmd.Parameters.AddWithValue("@Activity", txtActivity.Text);
                     cmd.Parameters.AddWithValue("@Programs", txtPrograms.Text);
                     cmd.Parameters.AddWithValue("@Module", ucSearchPage.ModuleId);
+                    cmd.Parameters.AddWithValue("@User", HttpContext.Current.Session["User"] != null ? ((User)HttpContext.Current.Session["User"]).UserName : "");
                     cmd.Connection.Open();
                     nStatus = Convert.ToInt32(cmd.ExecuteScalar());
                     cmd.Connection.Close();
@@ -156,6 +157,7 @@ namespace StoryBoard
                     cmd.Parameters.AddWithValue("@Activity", txtActivity.Text);
                     cmd.Parameters.AddWithValue("@Programs", txtPrograms.Text);
                     cmd.Parameters.AddWithValue("@Module", ucSearchPage.ModuleId);
+                    cmd.Parameters.AddWithValue("@User", HttpContext.Current.Session["User"] != null ? ((User)HttpContext.Current.Session["User"]).UserName : "");
                     cmd.Connection.Open();
                     nStatus = Convert.ToInt32(cmd.ExecuteScalar());
                     cmd.Connection.Close();

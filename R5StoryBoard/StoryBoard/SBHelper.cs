@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Web;
 
@@ -28,12 +29,25 @@ namespace StoryBoard
 
         public static string EncodeData(string strData)
         {
-            return HttpUtility.HtmlEncode(strData).Replace(Environment.NewLine, "<br>");;
+            string sdata = "";
+            if (!string.IsNullOrEmpty(strData))
+                sdata = HttpUtility.HtmlEncode(strData.Replace(Environment.NewLine, "<br>").Replace("\n", "<br>")).Replace("&amp;", "&");
+            return sdata;
         }
 
         public static string DecodeData(string strData)
         {
-            return HttpUtility.HtmlDecode(strData).Replace("<br>", Environment.NewLine);
+            return HttpUtility.HtmlDecode(strData).Replace("&lt;", "<").Replace("&gt;", ">").Replace("<br>", Environment.NewLine).Replace("&#39;", "'");
+        }
+
+        public static Dictionary<string, ImageFormat> ImageFormats
+        {
+            get
+            {
+                return new Dictionary<string, ImageFormat>() { { ".jpeg", ImageFormat.Jpeg }, { ".jpg", ImageFormat.Jpeg }, { ".png", ImageFormat.Png }, { ".bmp", ImageFormat.Bmp }, { ".gif", ImageFormat.Gif } };
+
+            }
+
         }
     }
 }

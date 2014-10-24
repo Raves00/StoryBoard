@@ -163,8 +163,7 @@ namespace StoryBoard
             }
         }
 
-        private void 
-            CopyExistingData(List<int> ItemsToBeDeleted = null)
+        private void CopyExistingData(List<int> ItemsToBeDeleted = null)
         {
             if (PageElementsTable != null)
             {
@@ -174,13 +173,13 @@ namespace StoryBoard
                 {
                     int elementId;
                     int.TryParse(Convert.ToString(gvPageElements.DataKeys[i].Values["ElementID"]), out elementId);
-                    string strElementName = (gvPageElements.Rows[i].FindControl("txtElementName") as TextBox).Text.Trim();
+                    string strElementName = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtElementName") as TextBox).Text.Trim());
                     string strLength = (gvPageElements.Rows[i].FindControl("txtLength") as TextBox).Text.Trim();
                     int intControlType = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlControlType") as DropDownList).SelectedValue);
                     int bIsRequired = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
                     string strReferenceTable = (gvPageElements.Rows[i].FindControl("ddlReferenceTable") as DropDownList).SelectedValue.Trim();
-                    string strDisplayRule =SBHelper.EncodeData( (gvPageElements.Rows[i].FindControl("txtDisplayRule") as TextBox).Text.Trim());
-                    string strValidations =SBHelper.EncodeData( (gvPageElements.Rows[i].FindControl("txtValidations") as TextBox).Text.Trim());
+                    string strDisplayRule = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtDisplayRule") as TextBox).Text.Trim());
+                    string strValidations = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtValidations") as TextBox).Text.Trim());
                     string strValidationTrigger = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtValidationTrigger") as TextBox).Text.Trim());
                     string strErrorCode = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtErrorCode") as TextBox).Text.Trim());
                     int intStatus = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlStatus") as DropDownList).SelectedValue);
@@ -429,6 +428,7 @@ namespace StoryBoard
                     }
                     catch (Exception ex)
                     {
+                        ErrorLogger.LogError("AddDataElements", ex);
                         lblErrorMessage.Text = "Error occurred while saving data.";
                         lblErrorMessage.Visible = true;
                     }
@@ -550,7 +550,7 @@ namespace StoryBoard
             cs.RegisterStartupScript(this.GetType(), "ConfirmSave", "ConfirmElementUpdate()", true);
         }
 
-        
+
         protected void btnDelete_Click(object sender, EventArgs e)
         {
             List<int> lstItemsToBeDeleted = new List<int>();
@@ -564,8 +564,9 @@ namespace StoryBoard
                 if (chkIsToBeDeleted.Checked)
                 {
                     //delete from database
+                    string strUserId = Session["User"] != null ? ((User)Session["User"]).UserName : "";
                     if (elementId > 0)
-                        DataMaster.DeleteElement(elementMappingId);
+                        DataMaster.DeleteElement(elementMappingId, strUserId);
 
                     //add element to delete list
                     lstItemsToBeDeleted.Add(i);

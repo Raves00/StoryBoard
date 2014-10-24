@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -11,9 +12,17 @@ namespace StoryBoard
 {
     public partial class ScreenImages : System.Web.UI.Page
     {
+
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (!IsPostBack)
+            {
+                string strerrormsg = string.Format("Only {0} file types allowed", ConfigurationManager.AppSettings["AllowedImageFiles"]);
+                lblfp1error.Text = strerrormsg;
+                lblfp2error.Text = strerrormsg;
+                lblfp3error.Text = strerrormsg;
+                lblfp4error.Text = strerrormsg;
+            }
         }
 
         protected void Page_Init(object sender, EventArgs e)
@@ -31,34 +40,42 @@ namespace StoryBoard
             }
         }
 
-        private void UploadFile(HttpPostedFile PostedImage)
+        private bool UploadFile(HttpPostedFile PostedImage)
         {
+
             int nPageId = ucSearchPage.SelectedPageId;
             string strImageName = Path.GetFileName(PostedImage.FileName);
-            byte[] ImageData = new byte[PostedImage.ContentLength];
-            PostedImage.InputStream.Read(ImageData, 0, (int)PostedImage.ContentLength);
-            DataMaster.UploadImageForPage(nPageId, strImageName, ImageData);
+            string strExtn = Path.GetExtension(PostedImage.FileName);
+            string[] _allowedExtns = Convert.ToString(ConfigurationManager.AppSettings["AllowedImageFiles"]).Split(", ".ToCharArray(),StringSplitOptions.RemoveEmptyEntries);
+            if (_allowedExtns.Contains(strExtn))
+            {
+                byte[] ImageData = new byte[PostedImage.ContentLength];
+                PostedImage.InputStream.Read(ImageData, 0, (int)PostedImage.ContentLength);
+                DataMaster.UploadImageForPage(nPageId, strImageName, ImageData);
+                return true;
+            }
+            else
+                return false;
         }
 
         protected void btnUpload_Click(object sender, EventArgs e)
         {
             if (fu_1.HasFile)
             {
-                UploadFile(fu_1.PostedFile);
+                lblfp1error.Visible = !UploadFile(fu_1.PostedFile);
             }
             if (fu_2.HasFile)
             {
-                UploadFile(fu_2.PostedFile);
+                lblfp2error.Visible = !UploadFile(fu_2.PostedFile);
             }
             if (fu_3.HasFile)
             {
-                UploadFile(fu_3.PostedFile);
+                lblfp3error.Visible = !UploadFile(fu_3.PostedFile);
             }
             if (fu_4.HasFile)
             {
-                UploadFile(fu_4.PostedFile);
+                lblfp4error.Visible = !UploadFile(fu_4.PostedFile);
             }
-
 
             RefreshImageDetails(ucSearchPage.SelectedPageId);
         }

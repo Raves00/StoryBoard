@@ -307,6 +307,7 @@ namespace StoryBoard
         {
             bool isvalid = false;
             int nPageId = Convert.ToInt32(ddlPage.SelectedValue);
+            string strUserId = Session["User"] != null ? ((User)Session["User"]).UserName : "";
             if (nPageId != -1)
             {
                 XDocument xdoc = new XDocument();
@@ -327,9 +328,9 @@ namespace StoryBoard
                     string strErrorCode = (gvPageElements.Rows[i].FindControl("txtErrorCode") as TextBox).Text.Trim();
                     int intStatus = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlStatus") as DropDownList).SelectedValue);
 
-                    int bIsKTAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
-                    int bIsSNAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
-                    int bIsMedicAid = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
+                    int bIsKTAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlIsKTAP") as DropDownList).SelectedValue);
+                    int bIsSNAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlIsSNAP") as DropDownList).SelectedValue);
+                    int bIsMedicAid = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlIsMedicaid") as DropDownList).SelectedValue);
                     string bIsOtherPrograms = (gvPageElements.Rows[i].FindControl("txtOtherPrograms") as TextBox).Text;
                     string strDatabaseName = (gvPageElements.Rows[i].FindControl("txtDatabaseTableName") as TextBox).Text.Trim();
                     string strDatabaseFields = (gvPageElements.Rows[i].FindControl("txtDatabaseFields") as TextBox).Text.Trim();
@@ -401,7 +402,7 @@ namespace StoryBoard
                         string strSSPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSPDisplayName").Value;
                         string strWPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("WPDisplayName").Value;
                         DataMaster.UpdatePageElement(nPageId, _elementid, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, "-1");
-                        DataMaster.AddPageElementMapping(nPageId, _elementid);
+                        DataMaster.AddPageElementMapping(nPageId, _elementid, strUserId);
                     }
                     isvalid= true;
                 }
@@ -449,6 +450,7 @@ namespace StoryBoard
         {
             if (ViewState["ElementData"] != null)
             {
+                string strUserId = Session["User"] != null ? ((User)Session["User"]).UserName : "";
                 int nPageId = Convert.ToInt32(ddlPage.SelectedValue);
                 XDocument xdoc = XDocument.Parse(Convert.ToString(ViewState["ElementData"]));
                 int count = xdoc.Element("ElementSet").Elements("Elements").Count();
@@ -475,7 +477,7 @@ namespace StoryBoard
                     string strSSPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSPDisplayName").Value;
                     string strWPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("WPDisplayName").Value;
                     DataMaster.UpdatePageElement(nPageId, _elementid, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, "-1");
-                    DataMaster.AddPageElementMapping(nPageId, _elementid);
+                    DataMaster.AddPageElementMapping(nPageId, _elementid, strUserId);
                 }
             }
         }

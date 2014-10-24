@@ -10,7 +10,7 @@
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         
-        <table class="auto-style1">
+        <table >
             <tr>
                 <td>Module:</td>
                 <td>
@@ -20,11 +20,13 @@
                     </asp:DropDownList>
 
                 </td>
-                <td>&nbsp;</td>
+                <td runat="server" id="td_top_label"></td>
+                <td runat="server" id="td_top_ctrl"></td>
             </tr>
-            <tr>
-                <td>Page</td>
-                <td>
+           <tr>
+                <td runat="server" id="td_bottom_label">
+                    <asp:label ID="pg" runat="server">Page</asp:label></td>
+                <td runat="server" id="td_bottom_ctrl">
                     <asp:DropDownList ID="ddlPageList" runat="server" AutoPostBack="true" DataTextField="PageName" DataValueField="PageID" OnSelectedIndexChanged="ddlPageList_SelectedIndexChanged">
                         
                     </asp:DropDownList>
@@ -32,6 +34,7 @@
                 <td>
                     <asp:Button ID="btnAdd" runat="server" Text="Add" OnClick="btnAdd_Click" Width="96px" />
                 </td>
+                <td>&nbsp;</td>
             </tr>
         </table>
     </ContentTemplate>

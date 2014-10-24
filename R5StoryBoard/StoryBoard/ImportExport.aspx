@@ -6,7 +6,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div>
         <h3>Import Data</h3>
-        <uc1:SearchPage ID="ucSearch" runat="server" ShowAddButton ="false"/>
+        <uc1:SearchPage ID="ucSearch" runat="server" ShowAddButton ="false" ShowPgList="False"/>
         <asp:FileUpload ID="FileUpload1" runat="server" />
         <asp:Button ID ="btImport" runat ="server" Text="Import" OnClick="btImport_Click"/>        <br />
         <asp:Label ID="lblErrorMessage" runat="server" ForeColor="Red" Visible="False"></asp:Label>

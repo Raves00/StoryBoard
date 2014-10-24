@@ -21,7 +21,7 @@
                 <td>&nbsp;</td>
             </tr>
             <tr>
-                <td>1.</td>
+                <td>&nbsp;</td>
                 <td>
                     <asp:FileUpload ID="fu_1" runat="server" AllowMultiple="true" />
                 </td>
@@ -41,6 +41,27 @@
                 <td>
                     <asp:Button ID="btnUpload" Width="150px" runat="server" Text="Upload Files" OnClick="btnUpload_Click" />
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <asp:Label ID="lblfp1error" runat="server" Visible="false" ForeColor="Red"  ></asp:Label>
+                </td>
+                <td>&nbsp;</td>
+                <td>
+                    <asp:Label ID="lblfp2error" runat="server" Visible="false" ForeColor="Red" ></asp:Label>
+                </td>
+                <td>&nbsp;</td>
+                <td>
+                    <asp:Label ID="lblfp3error" runat="server" Visible="false" ForeColor="Red"  ></asp:Label>
+                </td>
+                <td>&nbsp;</td>
+                <td>
+                    <asp:Label ID="lblfp4error" runat="server" Visible="false" ForeColor="Red"  ></asp:Label>
+                </td>
+                <td>&nbsp;</td>
+                <td>
+                    &nbsp;</td>
             </tr>
         </table>
         <br />

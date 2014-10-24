@@ -33,7 +33,8 @@
                         var observableData = ko.mapping.fromJS(elemjson, mapping);
                         var array = observableData();
                         _VMContext.ElementList(array);
-                        OpenSearchDialog();
+                        if (elemjson.length > 0)
+                            OpenSearchDialog();
 
                     },
                     error: function (result) {
@@ -63,7 +64,7 @@
         var wWidth;
         var wHeight
         function OpenSearchDialog() {
-            var dWidth = wWidth * 0.95;
+            var dWidth = '82%';
             $('#elemsearchresults').dialog({
                 title: "Search Results",
                 modal: true,
@@ -80,7 +81,13 @@
                 self.selectedElement(data);
                 $('#elemsearchresults').dialog('close');
                 $.each(data, function (classname, value) {
-                    CurrentEditedRow.find('.' + classname).val(value().replace(/<br\s*[\/]?>/gi, "\n"));
+                    try {
+                        var currobj = CurrentEditedRow.find('.' + classname);
+                        if (currobj != undefined)
+                            currobj.val((value().toString().replace(/&#39;\s*[\/]?/gi, "'").replace(/&lt;\s*[\/]?/gi, "<").replace(/&gt;\s*[\/]?/gi, ">").replace(/<br\s*[\/]?>/gi, "\n")));
+                    } catch (e) {
+                        //alert(e);
+                    }
                 });
             };
         }
@@ -97,7 +104,7 @@
             $('#elemValidationResults').dialog({
                 title: "Search Results",
                 modal: true,
-                width: wWidth * 0.60,
+                width: '82%',
                 height: wHeight
             });
         }
@@ -155,7 +162,7 @@
                                         <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ValidationGroup="submit" ControlToValidate="txtElementName" Display="Dynamic" ErrorMessage="*" ForeColor="Red"></asp:RequiredFieldValidator>
                                     </td>
                                     <td>
-                                        <asp:TextBox ID="txtElementName" onchange="OpenSuggest(this);" CssClass="ElementName" runat="server" Text='<%# Bind("ElementName") %>' ValidationGroup="submit" TextMode="MultiLine"></asp:TextBox>
+                                        <asp:TextBox ID="txtElementName" onchange="OpenSuggest(this);" CssClass="ElementName" runat="server" Text='<%# StoryBoard.SBHelper.DecodeData(Convert.ToString(DataBinder.Eval(Container.DataItem,"ElementName"))) %>'  ValidationGroup="submit" TextMode="MultiLine"></asp:TextBox>
                                     </td>
                                 </tr>
                             </table>
@@ -193,11 +200,10 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Reference Table" SortExpression="ReferenceTable">
                         <ItemTemplate>
-                            <asp:DropDownList ID="ddlReferenceTable" DataTextField="ReferenceTableName" DataValueField="ReferenceTableCode" runat="server" CssClass="ReferenceTable">
+                            <asp:DropDownList ID="ddlReferenceTable" DataTextField="ReferenceTableName" DataValueField="ReferenceTableNameId" AppendDataBoundItems="true" runat="server" CssClass="ReferenceTable">
+                                <asp:ListItem Text="N/A" Value="-1"></asp:ListItem>
                             </asp:DropDownList>
-
                         </ItemTemplate>
-
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Display Rule" SortExpression="DisplayRule">
                         <ItemTemplate>
@@ -324,7 +330,7 @@
             </thead>
             <!-- ko if: ElementList().length -->
             <tbody data-bind="foreach: ElementList">
-                <tr data-bind="click: $root.selectElement, css: {'selected':$root.selectedElement() == $data}">
+                <tr data-bind="click: $root.selectElement, css: { 'selected': $root.selectedElement() == $data }">
                     <td data-bind="text: ElementName"></td>
                     <td data-bind="text: SSPDisplayName"></td>
                     <td data-bind="text: WPDisplayName"></td>

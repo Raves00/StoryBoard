@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -33,7 +34,7 @@ namespace StoryBoard
             {
                 if (HttpContext.Current.Session["ModuleType"] != null)
                 {
-                    return Convert.ToInt32( HttpContext.Current.Session["ModuleType"]);
+                    return Convert.ToInt32(HttpContext.Current.Session["ModuleType"]);
                 }
                 return -1;
             }
@@ -42,35 +43,29 @@ namespace StoryBoard
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            string strUrl = Request.Url.Segments[Request.Url.Segments.Count() - 1];
-            switch (strUrl)
+            var items = lstMenu.Controls;
+            string pageName = Path.GetFileNameWithoutExtension(Request.Path);
+            foreach (var lstitem in items)
             {
-                case "AddPageDetails.aspx":
-                    m1.Attributes.Add("class", "active");
-                    m2.Attributes.Remove("class");
-                    m3.Attributes.Remove("class");
-                    m4.Attributes.Remove("class");
-                    break;
-                case "AddDataElements.aspx":
-                    m2.Attributes.Add("class", "active");
-                    m1.Attributes.Remove("class");
-                    m3.Attributes.Remove("class");
-                    m4.Attributes.Remove("class");
-                    break;
-                case "ScreenImages.aspx":
-                    m3.Attributes.Add("class", "active");
-                    m4.Attributes.Remove("class");
-                    m1.Attributes.Remove("class");
-                    m2.Attributes.Remove("class");
-                    break;
-                case "SearchElements.aspx":
-                    m4.Attributes.Add("class", "active");
-                    m1.Attributes.Remove("class");
-                    m2.Attributes.Remove("class");
-                    m3.Attributes.Remove("class");
-                    break;
-            }
+                if (lstitem.GetType() == typeof(System.Web.UI.HtmlControls.HtmlGenericControl))
+                {
+                    var pageitem = ((System.Web.UI.HtmlControls.HtmlGenericControl)(lstitem));
+                    var pagedetails = pageitem.InnerText;
+                    if (pagedetails.IndexOf(pageName) != -1)
+                    {
+                        foreach (var itemsagain in items)
+                        {
+                            if (itemsagain.GetType() == typeof(System.Web.UI.HtmlControls.HtmlGenericControl))
+                            {
+                                ((System.Web.UI.HtmlControls.HtmlGenericControl)(itemsagain)).Attributes.Remove("class");
+                            }
+                        }
+                        pageitem.Attributes.Add("class", "active");
 
+                    }
+                }
+            }
+            
             if (Session["User"] == null)
                 Response.Redirect("Login.aspx");
             else
