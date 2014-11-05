@@ -24,7 +24,7 @@ namespace StoryBoard
             return 0;
         }
 
-        public static bool DeleteElement(int nElementMappingID,string strDeletedBy)
+        public static bool DeleteElement(int nElementMappingID, string strDeletedBy)
         {
             bool issucess = false;
             try
@@ -172,7 +172,7 @@ namespace StoryBoard
 
         }
 
-        internal static void AddPageElementMapping(int nPageId, int elementId,string strUserName)
+        internal static void AddPageElementMapping(int nPageId, int elementId, string strUserName)
         {
             using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
             {
@@ -287,7 +287,9 @@ namespace StoryBoard
             }
         }
 
-        internal static void UpdatePageElement(int nPageId, int nElementId, string strElementName, string strLength, int intControlType, int bIsRequired, string strReferenceTable, string strDisplayRule, string strValidations, string strValidationTrigger, string strErrorCode, int intStatus, int bIsKTAP, int bIsSNAP, int bIsMedicAid, string bIsOtherPrograms, string strDatabaseName, string strDatabaseFields, string strOpenQuestions, string strSSPDispName, string strWPDispName, string IAElemID)
+        internal static void UpdatePageElement(int nPageId, int nElementId, string strElementName, string strLength, int intControlType, int bIsRequired, string strReferenceTable,
+            string strDisplayRule, string strValidations, string strValidationTrigger, string strErrorCode, int intStatus, int bIsKTAP, int bIsSNAP, int bIsMedicAid, string bIsOtherPrograms,
+            string strDatabaseName, string strDatabaseFields, string strOpenQuestions, string strSSPDispName, string strWPDispName, string IAElemID, int intSSPControlType, int bSSPIsRequired, string strSSPDisplayRule, string strSSPValidations, string strSSPErrorCode, int associd = -1)
         {
             int nLength = -1;
             int.TryParse(strLength, out nLength);
@@ -320,6 +322,13 @@ namespace StoryBoard
                     cmd.Parameters.AddWithValue("@SSPDispName", SBHelper.EncodeData(strSSPDispName));
                     cmd.Parameters.AddWithValue("@WPDispName", SBHelper.EncodeData(strWPDispName));
                     cmd.Parameters.AddWithValue("@User", HttpContext.Current.Session["User"] != null ? ((User)HttpContext.Current.Session["User"]).UserName : "");
+                    cmd.Parameters.AddWithValue("@ElementMappingID", associd);
+                    cmd.Parameters.AddWithValue("@SSP_ControlType", intSSPControlType);
+                    cmd.Parameters.AddWithValue("@SSP_IsRequired", bSSPIsRequired);
+                    cmd.Parameters.AddWithValue("@SSP_DisplayRule", SBHelper.EncodeData(strSSPDisplayRule));
+                    cmd.Parameters.AddWithValue("@SSP_Validations", SBHelper.EncodeData(strSSPValidations));
+                    cmd.Parameters.AddWithValue("@SSP_ErrorCode", SBHelper.EncodeData(strSSPErrorCode));
+
                     cmd.Connection.Open();
                     cmd.ExecuteNonQuery();
                     cmd.Connection.Close();
@@ -328,7 +337,8 @@ namespace StoryBoard
             }
         }
 
-        internal static void InsertPageElement(int nPageId = 0, string strElementName = null, string strLength = null, int intControlType = 0, int bIsRequired = 0, string strReferenceTable = null, string strDisplayRule = null, string strValidations = null, string strValidationTrigger = null, string strErrorCode = null, int intStatus = 0, int bIsKTAP = 0, int bIsSNAP = 0, int bIsMedicAid = 0, string bIsOtherPrograms = null, string strDatabaseName = null, string strDatabaseFields = null, string strOpenQuestions = null, string strSSPDispName = null, string strWPDispName = null, string IAElemID = null)
+        internal static void InsertPageElement(int nPageId = 0, string strElementName = null, string strLength = null, int intControlType = 0, int bIsRequired = 0, string strReferenceTable = null, string strDisplayRule = null, string strValidations = null, string strValidationTrigger = null, string strErrorCode = null, int intStatus = 0, int bIsKTAP = 0, int bIsSNAP = 0, int bIsMedicAid = 0, string bIsOtherPrograms = null, string strDatabaseName = null, string strDatabaseFields = null, string strOpenQuestions = null,
+            string strSSPDispName = null, string strWPDispName = null, string IAElemID = null, int intSSPControlType = 0, int bSSPIsRequired = 0, string strSSPDisplayRule = null, string strSSPValidations = null, string strSSPErrorCode = null, int associd=-1)
         {
             int nLength = -1;
             int.TryParse(strLength, out nLength);
@@ -360,7 +370,14 @@ namespace StoryBoard
                     cmd.Parameters.AddWithValue("@SSPDispName", SBHelper.EncodeData(strSSPDispName));
                     cmd.Parameters.AddWithValue("@WPDispName", SBHelper.EncodeData(strWPDispName));
                     cmd.Parameters.AddWithValue("@IAElemID", SBHelper.EncodeData(IAElemID));
-                    cmd.Parameters.AddWithValue("@User", HttpContext.Current.Session["User"]!=null ? ((User)HttpContext.Current.Session["User"]).UserName: "");
+                    cmd.Parameters.AddWithValue("@User", HttpContext.Current.Session["User"] != null ? ((User)HttpContext.Current.Session["User"]).UserName : "");
+                    cmd.Parameters.AddWithValue("@ElementMappingID", associd);
+                    cmd.Parameters.AddWithValue("@SSP_ControlType", intSSPControlType);
+                    cmd.Parameters.AddWithValue("@SSP_IsRequired", bSSPIsRequired);
+                    cmd.Parameters.AddWithValue("@SSP_DisplayRule", SBHelper.EncodeData(strSSPDisplayRule));
+                    cmd.Parameters.AddWithValue("@SSP_Validations", SBHelper.EncodeData(strSSPValidations));
+                    cmd.Parameters.AddWithValue("@SSP_ErrorCode", SBHelper.EncodeData(strSSPErrorCode));
+
                     cmd.Connection.Open();
                     cmd.ExecuteNonQuery();
                     cmd.Connection.Close();
@@ -401,7 +418,12 @@ namespace StoryBoard
                     cmd.Parameters.AddWithValue("@WPDispName", SBHelper.EncodeData(strWPDispName));
                     cmd.Parameters.AddWithValue("@IAElemID", SBHelper.EncodeData(IAElemID));
                     cmd.Parameters.AddWithValue("@User", HttpContext.Current.Session["User"] != null ? ((User)HttpContext.Current.Session["User"]).UserName : "");
-                  
+                    cmd.Parameters.AddWithValue("@SSP_ControlType", intControlType);
+                    cmd.Parameters.AddWithValue("@SSP_IsRequired", bIsRequired);
+                    cmd.Parameters.AddWithValue("@SSP_DisplayRule", SBHelper.EncodeData(strDisplayRule));
+                    cmd.Parameters.AddWithValue("@SSP_Validations", SBHelper.EncodeData(strValidations));
+                    cmd.Parameters.AddWithValue("@SSP_ErrorCode", SBHelper.EncodeData(strErrorCode));
+
                     cmd.Connection.Open();
                     cmd.ExecuteNonQuery();
                     cmd.Connection.Close();
@@ -458,7 +480,7 @@ namespace StoryBoard
 
         internal static DataTable GetReferenceTableValues(int selectedRefTable)
         {
-           using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
             {
                 using (SqlDataAdapter sda = new SqlDataAdapter())
                 {
@@ -474,10 +496,10 @@ namespace StoryBoard
                 }
             }
         }
-        
+
         internal static DataTable GetReferenceTableNamesWithvalues(int selectedRefTable)
         {
-           using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
             {
                 using (SqlDataAdapter sda = new SqlDataAdapter())
                 {
@@ -490,6 +512,132 @@ namespace StoryBoard
                         sda.Fill(ds);
                         return ds.Tables[0];
                     }
+                }
+            }
+        }
+
+        internal static DataTable GetPageComponents(int PageID)
+        {
+            using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
+                using (SqlDataAdapter sda = new SqlDataAdapter())
+                {
+                    using (SqlCommand cmd = new SqlCommand("stp_GetComponentsByPage", sqlconn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@PageId", PageID);
+                        sda.SelectCommand = cmd;
+                        DataSet ds = new DataSet();
+                        sda.Fill(ds);
+                        return ds.Tables[0];
+                    }
+                }
+            }
+        }
+
+        internal static DataTable GetComponentTypes()
+        {
+            using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
+                using (SqlDataAdapter sda = new SqlDataAdapter())
+                {
+                    using (SqlCommand cmd = new SqlCommand("stp_GetComponentTypeMaster", sqlconn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        sda.SelectCommand = cmd;
+                        DataSet ds = new DataSet();
+                        sda.Fill(ds);
+                        return ds.Tables[0];
+                    }
+                }
+            }
+        }
+
+        internal static void InsertUpdatePageComponents(int _pageid, int _componentid, int _componenttype, string _componentName, string _componentDesc, string strUserName)
+        {
+            using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("stp_InsertUpdatePageComponents", sqlconn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@PageID", _pageid);
+                    cmd.Parameters.AddWithValue("@ComponentID", _componentid);
+                    cmd.Parameters.AddWithValue("@ComponentType", _componenttype);
+                    cmd.Parameters.AddWithValue("@ComponentName", _componentName);
+                    cmd.Parameters.AddWithValue("@ComponentDescription", _componentDesc);
+                    cmd.Parameters.AddWithValue("@User", strUserName);
+                    cmd.Connection.Open();
+                    cmd.ExecuteNonQuery();
+                    cmd.Connection.Close();
+                }
+            }
+        }
+
+        internal static void DeleteComponent(int _componentid)
+        {
+            using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("stp_DeletePageComponent", sqlconn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ComponentId", _componentid);
+                    cmd.Connection.Open();
+                    cmd.ExecuteNonQuery();
+                    cmd.Connection.Close();
+                }
+            }
+        }
+
+        internal static DataSet ReviewElements(int PageId, DataTable dt)
+        {
+            DataSet ds = null;
+            dt.TableName = "Elements";
+            if (dt.DataSet == null)
+            {
+                ds = new DataSet("ReviewElements");
+                ds.Tables.Add(dt);
+            }
+            else
+            {
+                ds = dt.DataSet;
+                ds.DataSetName = "ReviewElements";
+            }
+
+            string elementData = ds.GetXml();
+
+            using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
+                using (SqlDataAdapter sda = new SqlDataAdapter())
+                {
+                    using (SqlCommand cmd = new SqlCommand("stp_ReviewElementsForDuplicates", sqlconn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@PageID", PageId);
+                        cmd.Parameters.AddWithValue("@strElementText", elementData);
+                        sda.SelectCommand = cmd;
+                        DataSet dselements_tobereviewed = new DataSet();
+                        sda.Fill(dselements_tobereviewed);
+                        return dselements_tobereviewed;
+                    }
+                }
+            }
+
+        }
+
+        internal static void UpdateExcelImportMapping(int _pageid, int _elementid,string elementname,string strUser)
+        {
+           using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("stp_UpdateReviewElementForImport", sqlconn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@PageID", _pageid);
+                    cmd.Parameters.AddWithValue("@ElementId", _elementid);
+                    cmd.Parameters.AddWithValue("@ElementName", elementname);
+                    cmd.Parameters.AddWithValue("@User", strUser);
+                    cmd.Connection.Open();
+                    cmd.ExecuteNonQuery();
+                    cmd.Connection.Close();
                 }
             }
         }

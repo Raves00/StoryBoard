@@ -37,6 +37,9 @@ namespace StoryBoard
 
         public static string DecodeData(string strData)
         {
+            if (string.IsNullOrEmpty(strData))
+                return string.Empty;
+
             return HttpUtility.HtmlDecode(strData).Replace("&lt;", "<").Replace("&gt;", ">").Replace("<br>", Environment.NewLine).Replace("&#39;", "'");
         }
 

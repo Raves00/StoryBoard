@@ -16,12 +16,14 @@ namespace StoryBoard
 
         public static void LogError(string strPagename, Exception ex)
         {
+            logger.Error("=============================");
             logger.Error(strPagename, ex);
+            logger.Error("=============================");
         }
 
         public static void LogError(string strPagename, string exception)
         {
-            logger.Error(string.Format("Source:{0} Error: {1}", strPagename, exception));
+            logger.Error(string.Format("===================\nSource:{0} Error: {1}\n===============", strPagename, exception));
         }
     }
 }

@@ -51,7 +51,7 @@ namespace StoryBoard
                 {
                     var pageitem = ((System.Web.UI.HtmlControls.HtmlGenericControl)(lstitem));
                     var pagedetails = pageitem.InnerText;
-                    if (pagedetails.IndexOf(pageName) != -1)
+                    if (pagedetails.IndexOf(pageName,StringComparison.CurrentCultureIgnoreCase) != -1)
                     {
                         foreach (var itemsagain in items)
                         {

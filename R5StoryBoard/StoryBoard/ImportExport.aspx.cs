@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,11 +23,16 @@ namespace StoryBoard
 
         protected void Page_Init(object sender, EventArgs e)
         {
+            btnChange.Text = ConfigurationManager.AppSettings["ImportReviewButtonText"];
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            int roleid = (Session["User"] as User).RoleId;
+            if (roleid == 2)
+            {
+                btImport.Visible = false;
+            }
         }
 
         protected void btImport_Click(object sender, EventArgs e)
@@ -83,7 +89,7 @@ namespace StoryBoard
             oda.Fill(dtPg);
 
             dt = new DataTable();
-            cmdExcel.CommandText = "SELECT * From [" + Sheet2 + "]";
+            cmdExcel.CommandText = "SELECT * From [" + Sheet2 + "] where LEN([Data Element])>0";
             oda.SelectCommand = cmdExcel;
             oda.Fill(dt);
 
@@ -143,7 +149,7 @@ namespace StoryBoard
             #region Validations
             foreach (DataRow rw in dt.Rows)
             {
-                string ctrl = rw.ItemArray[3].ToString().Replace(" ", ""); // Remove White spaces for control names
+                string ctrl = rw.ItemArray[3].ToString().Trim(); // Remove White spaces for control names
                 if (dtCtrl.Select("ControlTypeDesc = '" + ctrl + "'").Length == 0 & !string.IsNullOrEmpty(ctrl))
                 {
                     invalid = true;
@@ -154,17 +160,17 @@ namespace StoryBoard
                     }
                 }
 
-                string st = rw.ItemArray[10].ToString().Replace(" ", ""); // Remove White spaces 
-                if (dtStatus.Select("StatusName = '" + st + "'").Length == 0 & !string.IsNullOrEmpty(st))
+                string st = rw.ItemArray[10].ToString().Trim(); // Remove White spaces 
+                if (dtStatus.Select("StatusName = '" + st + "'").Length == 0)
                 {
                     invalid = true;
-                    if (!err.ToString().Contains(st))
+                    if (!err.ToString().Contains(st) || st.Length == 0)
                     {
                         err.Append(st).Append(" is not a valid status").Append("<br/>");
                     }
                 }
 
-                string reft = rw.ItemArray[5].ToString().Replace(" ", ""); // Remove White spaces 
+                string reft = rw.ItemArray[5].ToString().Trim(); // Remove White spaces 
 
                 if (dtRef.Select("ReferenceTableName = '" + reft + "'").Length == 0 & !string.IsNullOrEmpty(reft) & !reft.Equals("N/A"))
                 {
@@ -232,7 +238,7 @@ namespace StoryBoard
                                 temp = dr.ItemArray[2].ToString();
                                 string strLength = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
 
-                                temp = dr.ItemArray[3].ToString().Replace(" ", "").Replace("'", "''");
+                                temp = dr.ItemArray[3].ToString().Trim().Replace("'", "''");
                                 int intControlType = (!string.IsNullOrEmpty(temp)) ?
                                     Convert.ToInt32(dtCtrl.Select("ControlTypeDesc = '" + temp + "'")[0].ItemArray[1].ToString().Trim()) : 0;
 
@@ -290,10 +296,12 @@ namespace StoryBoard
                                 string strSSPDispName = elName;
                                 string strWPDispName = elName;
 
-                                if (dr.ItemArray.Length > 18)
+                                if (dr.ItemArray.Length > 19)
                                 {
                                     temp = dr.ItemArray[19].ToString();
                                     strSSPDispName = (!string.IsNullOrEmpty(temp)) ? temp.Trim() : string.Empty;
+                                    if (strSSPDispName.Length == 0) // use element name if display name not provided
+                                        strSSPDispName = elName;
                                     strWPDispName = strSSPDispName;
                                 }
 
@@ -321,12 +329,37 @@ namespace StoryBoard
                                 lblErrorMessage.Visible = true;
                                 lblErrorMessage.ForeColor = System.Drawing.Color.Red;
                                 lblErrorMessage.Text = "Page already exists";
+                                return; //no more processing
                             }
                         }
                     }
 
                 }
-
+                //Map excel data to proper columns as its header contain encoded column names
+                try
+                {
+                    GetCleanedTable(dt);
+                    int pageid = Convert.ToInt32(ViewState["PageId"]);
+                    DataSet ds = DataMaster.ReviewElements(pageid, dt);
+                    if (ds != null && ds.Tables.Count == 2 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        btnChange.Visible = true;
+                        DataTable dtExcelData = ds.Tables[0];
+                        DataTable dtExistingData = ds.Tables[1];
+                        DecodeDataTable(dtExcelData);
+                        DecodeDataTable(dtExistingData);
+                        grdExcelElements.DataSource = dtExcelData;
+                        grdExistingMatched.DataSource = dtExistingData;
+                        grdExcelElements.DataBind();
+                        grdExistingMatched.DataBind();
+                        divReviewItems.Visible = ds.Tables[0].Rows.Count > 0;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    divReviewItems.Visible = false;
+                    ErrorLogger.LogError("ExcelReview", ex);
+                }
                 if (refinvalid == true)
                 {
                     using (SqlConnection sqlconn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoryBoardConnStr"].ConnectionString))
@@ -347,6 +380,99 @@ namespace StoryBoard
 
             }
             #endregion
+        }
+
+        private void GetCleanedTable(DataTable dtImportedExcelTable)
+        {
+            dtImportedExcelTable.Columns[0].ColumnName = "ElementID";
+            dtImportedExcelTable.Columns[1].ColumnName = "ElementName";
+            dtImportedExcelTable.Columns[2].ColumnName = "Length";
+            dtImportedExcelTable.Columns[3].ColumnName = "ControlType";
+            dtImportedExcelTable.Columns[4].ColumnName = "IsRequired";
+            dtImportedExcelTable.Columns[5].ColumnName = "ReferenceTable";
+            dtImportedExcelTable.Columns[6].ColumnName = "DisplayRule";
+            dtImportedExcelTable.Columns[7].ColumnName = "Validations";
+            dtImportedExcelTable.Columns[8].ColumnName = "ValidationTrigger";
+            dtImportedExcelTable.Columns[9].ColumnName = "ErrorCode";
+            dtImportedExcelTable.Columns[10].ColumnName = "Status";
+            dtImportedExcelTable.Columns[12].ColumnName = "KTAP";
+            dtImportedExcelTable.Columns[13].ColumnName = "SNAP";
+            dtImportedExcelTable.Columns[14].ColumnName = "MEDICAID";
+            dtImportedExcelTable.Columns[15].ColumnName = "OtherPrograms";
+            dtImportedExcelTable.Columns[16].ColumnName = "DatabaseTableName";
+            dtImportedExcelTable.Columns[17].ColumnName = "DatabaseTableFields";
+            dtImportedExcelTable.Columns[18].ColumnName = "OpenQuestions";
+            if (dtImportedExcelTable.Columns.Count > 19)
+            {
+                dtImportedExcelTable.Columns[19].ColumnName = "WPDisplayName";
+                if (dtImportedExcelTable.Columns.Count > 20)
+                    dtImportedExcelTable.Columns[20].ColumnName = "SSPDisplayName";
+            }
+
+            EncodeDataTable(dtImportedExcelTable);
+
+        }
+
+        private void EncodeDataTable(DataTable dtTableToBeEncoded)
+        {
+            foreach (DataRow _row in dtTableToBeEncoded.Rows)
+            {
+                for (int i = 0; i < _row.ItemArray.Count(); i++)
+                {
+                    object _rawdata = _row[i];
+                    Type rawdata_type = _rawdata.GetType();
+                    if (rawdata_type == typeof(string))
+                        _row[i] = SBHelper.EncodeData(Convert.ToString(_row[i]));
+                }
+            }
+        }
+
+        private void DecodeDataTable(DataTable dtTableToBeDecoded)
+        {
+            foreach (DataRow _row in dtTableToBeDecoded.Rows)
+            {
+                for (int i = 0; i < _row.ItemArray.Count(); i++)
+                {
+                    object _rawdata = _row[i];
+                    Type rawdata_type = _rawdata.GetType();
+                    if (rawdata_type == typeof(string))
+                        _row[i] = SBHelper.DecodeData(Convert.ToString(_row[i]));
+                }
+            }
+        }
+
+        protected void btnChange_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int _pageid;
+                int _elementid;
+                string username = HttpContext.Current.Session["User"] != null ? ((User)HttpContext.Current.Session["User"]).UserName : "";
+                foreach (GridViewRow excelrow in grdExcelElements.Rows)
+                {
+                    CheckBox chkexcel = (CheckBox)excelrow.FindControl("chkSelect");
+                    if (chkexcel.Checked)
+                    {
+                        var keys = grdExcelElements.DataKeys[excelrow.RowIndex].Values;
+                        _pageid = Convert.ToInt32(ViewState["PageId"]);
+                        _elementid = Convert.ToInt32(keys[0]);
+                        string elementname = SBHelper.EncodeData(((TextBox)excelrow.FindControl("txtElementName")).Text);
+                        DataMaster.UpdateExcelImportMapping(_pageid, _elementid, elementname, username);
+                    }
+                }
+                lblReviewStatus.Visible = true;
+                lblReviewStatus.Text = "Review completed successfully";
+                lblReviewStatus.ForeColor = Color.Green;
+            }
+            catch (Exception ex)
+            {
+                lblReviewStatus.Visible = true;
+                lblReviewStatus.Text = "Review unsuccessful";
+                lblReviewStatus.ForeColor = Color.Red;
+                ErrorLogger.LogError("ImportExport", ex);
+            }
+
+
         }
     }
 }

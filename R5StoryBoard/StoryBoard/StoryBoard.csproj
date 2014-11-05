@@ -67,6 +67,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AddComponent.aspx" />
     <Content Include="AddDataElements.aspx" />
     <Content Include="AddPageDetails.aspx" />
     <Content Include="AjaxDataProcessor.aspx" />
@@ -143,6 +144,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddComponent.aspx.cs">
+      <DependentUpon>AddComponent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AddComponent.aspx.designer.cs">
+      <DependentUpon>AddComponent.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AddDataElements.aspx.cs">
       <DependentUpon>AddDataElements.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -251,6 +259,26 @@
   <ItemGroup>
     <Content Include="GlobalMaster.Master" />
     <Content Include="GetScreenImage.ashx" />
+    <Content Include="Files\01_AR_Application Registration.xlsx" />
+    <Content Include="Files\02_DC_Resources_Liquid Assets.xlsx" />
+    <Content Include="Files\05_DC_Expenses_MAGI Expenses.xlsx" />
+    <Content Include="Files\05_DC_Expenses_ShelterExpenses.xlsx" />
+    <Content Include="Files\07_DC_Household_Incarceration.xlsx" />
+    <Content Include="Files\09_DC_Resources_Vehicle Details.xlsx" />
+    <Content Include="Files\10_AR_Individual Summary.xlsx" />
+    <Content Include="Files\14_AR_Program_Application Withdrawal %281%29.xlsx" />
+    <Content Include="Files\About You and Your Household.xlsx" />
+    <Content Include="Files\Build Your Household-Member1_Deck1.xlsx" />
+    <Content Include="Files\Build Your Household-Member1_Deck2.xlsx" />
+    <Content Include="Files\Build Your Household-Member2_Deck1.xlsx" />
+    <Content Include="Files\Build Your Household-Member2_Deck2 - Copy.xlsx" />
+    <Content Include="Files\Build_Your_Household-Household Members.xlsx" />
+    <Content Include="Files\Pre-Screening_Options.xlsx" />
+    <Content Include="Files\Primary Applicant Contact Information.xlsx" />
+    <Content Include="Files\Quick Pre-Screening.xlsx" />
+    <Content Include="Files\Your Financial Information - Copy.xlsx" />
+    <Content Include="Files\Your Financial Information.xlsx" />
+    <Content Include="Files\Your Results.xlsx" />
     <None Include="Properties\PublishProfiles\StoryBoardPublish.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

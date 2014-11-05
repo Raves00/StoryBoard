@@ -219,6 +219,13 @@ namespace StoryBoard
                 if (selectedcontroltype != null)
                     selectedcontroltype.Selected = true;
 
+                DropDownList ddlSSPControlType = e.Row.FindControl("ddlSSPControlType") as DropDownList;
+                ddlSSPControlType.DataSource = dtControlTypes;
+                ddlSSPControlType.DataBind();
+                var selectedsspcontroltype = ddlSSPControlType.Items.FindByValue(Convert.ToString(drv["SSP_ControlType"]));
+                if (selectedsspcontroltype != null)
+                    selectedsspcontroltype.Selected = true;
+
                 DropDownList ddlStatuses = e.Row.FindControl("ddlStatus") as DropDownList;
                 ddlStatuses.DataSource = dtStatuses;
                 ddlStatuses.DataBind();
@@ -240,6 +247,13 @@ namespace StoryBoard
                 var selectedisrequired = ddllsRequired.Items.FindByValue(Convert.ToString(drv["IsRequired"]));
                 if (selectedisrequired != null)
                     selectedisrequired.Selected = true;
+
+                DropDownList ddlSSPlsRequired = e.Row.FindControl("ddlSSPlsRequired") as DropDownList;
+                ddlSSPlsRequired.DataSource = dtYesNo;
+                ddlSSPlsRequired.DataBind();
+                var selectedsspisrequired = ddllsRequired.Items.FindByValue(Convert.ToString(drv["SSp_IsRequired"]));
+                if (selectedsspisrequired != null)
+                    selectedsspisrequired.Selected = true;
 
 
                 DropDownList ddllsKTAP = e.Row.FindControl("ddlIsKTAP") as DropDownList;
@@ -340,6 +354,12 @@ namespace StoryBoard
 
                     string strWPDispName = (gvPageElements.Rows[i].FindControl("txtWPDisplayName") as TextBox).Text.Trim();
 
+                    int intSSPControlType = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlSSPControlType") as DropDownList).SelectedValue);
+                    int bSSPIsRequired = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlSSPlsRequired") as DropDownList).SelectedValue);
+                    string strSSPDisplayRule = (gvPageElements.Rows[i].FindControl("txtSSPDisplayRule") as TextBox).Text.Trim();
+                    string strSSPValidations = (gvPageElements.Rows[i].FindControl("txtSSPValidations") as TextBox).Text.Trim();
+                    string strSSPErrorCode = (gvPageElements.Rows[i].FindControl("txtSSPErrorCode") as TextBox).Text.Trim();
+
                     if (chkIsToBeadded.Checked)
                     {
                         XElement elementroot = new XElement("Elements");
@@ -363,6 +383,13 @@ namespace StoryBoard
                         elementroot.Add(new XElement("OpenQuestions", SBHelper.EncodeData(strOpenQuestions)));
                         elementroot.Add(new XElement("SSPDisplayName", SBHelper.EncodeData(strSSPDispName)));
                         elementroot.Add(new XElement("WPDisplayName", SBHelper.EncodeData(strWPDispName)));
+
+                        elementroot.Add(new XElement("SSP_ControlType", intSSPControlType));
+                        elementroot.Add(new XElement("SSP_IsRequired", bSSPIsRequired));
+                        elementroot.Add(new XElement("SSP_DisplayRule", SBHelper.EncodeData(strSSPDisplayRule)));
+                        elementroot.Add(new XElement("SSP_Validations", SBHelper.EncodeData(strSSPValidations)));
+                        elementroot.Add(new XElement("SSP_ErrorCode", SBHelper.EncodeData(strSSPErrorCode)));
+
                         xRootElement.Add(elementroot);
                     }
                 }
@@ -374,7 +401,7 @@ namespace StoryBoard
                     grdElemValidationResults.DataSource = dselemvalidationresult.Tables[0];
                     grdElemValidationResults.DataBind();
                     ShowConfirmationDialog();
-                    isvalid= false;
+                    isvalid = false;
                 }
                 else
                 {
@@ -401,10 +428,19 @@ namespace StoryBoard
                         string strOpenQuestions = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("OpenQuestions").Value;
                         string strSSPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSPDisplayName").Value;
                         string strWPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("WPDisplayName").Value;
-                        DataMaster.UpdatePageElement(nPageId, _elementid, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, "-1");
+
+                        int intSSPControlType = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSP_ControlType").Value);
+                        int bSSPIsRequired = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSP_IsRequired").Value);
+                        string strSSPDisplayRule = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSP_DisplayRule").Value;
+                        string strSSPValidations = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSP_Validations").Value;
+                        string strSSPErrorCode = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSP_ErrorCode").Value;
+
+                        DataMaster.UpdatePageElement(nPageId, _elementid, strElementName, strLength, intControlType, bIsRequired, strReferenceTable,
+                            strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid,
+                            bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, "-1", intSSPControlType, bSSPIsRequired, strSSPDisplayRule, strSSPValidations, strSSPErrorCode);
                         DataMaster.AddPageElementMapping(nPageId, _elementid, strUserId);
                     }
-                    isvalid= true;
+                    isvalid = true;
                 }
             }
             return isvalid;
@@ -476,7 +512,14 @@ namespace StoryBoard
                     string strOpenQuestions = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("OpenQuestions").Value;
                     string strSSPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSPDisplayName").Value;
                     string strWPDispName = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("WPDisplayName").Value;
-                    DataMaster.UpdatePageElement(nPageId, _elementid, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, "-1");
+                    int intSSPControlType = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSP_ControlType").Value);
+                    int bSSPIsRequired = Convert.ToInt32(xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSP_IsRequired").Value);
+                    string strSSPDisplayRule = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSP_DisplayRule").Value;
+                    string strSSPValidations = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSP_Validations").Value;
+                    string strSSPErrorCode = xdoc.Element("ElementSet").Elements("Elements").ElementAt(i).Element("SSP_ErrorCode").Value;
+                    DataMaster.UpdatePageElement(nPageId, _elementid, strElementName, strLength, intControlType, bIsRequired, strReferenceTable,
+                        strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms,
+                        strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, "-1", intSSPControlType, bSSPIsRequired, strSSPDisplayRule, strSSPValidations, strSSPErrorCode);
                     DataMaster.AddPageElementMapping(nPageId, _elementid, strUserId);
                 }
             }

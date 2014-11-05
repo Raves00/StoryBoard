@@ -42,7 +42,6 @@ namespace StoryBoard
 
         private bool UploadFile(HttpPostedFile PostedImage)
         {
-
             int nPageId = ucSearchPage.SelectedPageId;
             string strImageName = Path.GetFileName(PostedImage.FileName);
             string strExtn = Path.GetExtension(PostedImage.FileName);

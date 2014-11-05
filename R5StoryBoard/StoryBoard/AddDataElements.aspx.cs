@@ -173,6 +173,8 @@ namespace StoryBoard
                 {
                     int elementId;
                     int.TryParse(Convert.ToString(gvPageElements.DataKeys[i].Values["ElementID"]), out elementId);
+                    int associd;
+                    int.TryParse(Convert.ToString(gvPageElements.DataKeys[i].Values["PageElementMappingId"]), out associd);
                     string strElementName = SBHelper.EncodeData((gvPageElements.Rows[i].FindControl("txtElementName") as TextBox).Text.Trim());
                     string strLength = (gvPageElements.Rows[i].FindControl("txtLength") as TextBox).Text.Trim();
                     int intControlType = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlControlType") as DropDownList).SelectedValue);
@@ -199,6 +201,7 @@ namespace StoryBoard
 
                     DataRow dr = PageElementsTable.NewRow();
                     dr["ElementID"] = elementId;
+                    dr["PageElementMappingId"] = associd;
                     dr["ElementName"] = strElementName;
                     dr["Length"] = strLength;
                     dr["ControlType"] = intControlType;
@@ -352,6 +355,14 @@ namespace StoryBoard
                 if (selectedcontroltype != null)
                     selectedcontroltype.Selected = true;
 
+                DropDownList ddlSSPControlType = e.Row.FindControl("ddlSSPControlType") as DropDownList;
+                ddlSSPControlType.DataSource = dtControlTypes;
+                ddlSSPControlType.DataBind();
+                var selectedsspcontroltype = ddlSSPControlType.Items.FindByValue(Convert.ToString(drv["SSP_ControlType"]));
+                if (selectedsspcontroltype != null)
+                    selectedsspcontroltype.Selected = true;
+
+
                 DropDownList ddlStatuses = e.Row.FindControl("ddlStatus") as DropDownList;
                 ddlStatuses.DataSource = dtStatuses;
                 ddlStatuses.DataBind();
@@ -373,6 +384,13 @@ namespace StoryBoard
                 var selectedisrequired = ddllsRequired.Items.FindByValue(Convert.ToString(drv["IsRequired"]));
                 if (selectedisrequired != null)
                     selectedisrequired.Selected = true;
+
+                DropDownList ddlSSPlsRequired = e.Row.FindControl("ddlSSPlsRequired") as DropDownList;
+                ddlSSPlsRequired.DataSource = dtYesNo;
+                ddlSSPlsRequired.DataBind();
+                var selectedsspisrequired = ddlSSPlsRequired.Items.FindByValue(Convert.ToString(drv["SSP_IsRequired"]));
+                if (selectedsspisrequired != null)
+                    selectedsspisrequired.Selected = true;
 
 
                 DropDownList ddllsKTAP = e.Row.FindControl("ddlIsKTAP") as DropDownList;
@@ -456,7 +474,8 @@ namespace StoryBoard
             {
                 int elementId;
                 int.TryParse(Convert.ToString(gvPageElements.DataKeys[i].Values["ElementID"]), out elementId);
-
+                int associd;
+                int.TryParse(Convert.ToString(gvPageElements.DataKeys[i].Values["PageElementMappingId"]), out associd);
                 string strElementName = (gvPageElements.Rows[i].FindControl("txtElementName") as TextBox).Text.Trim();
                 string strLength = (gvPageElements.Rows[i].FindControl("txtLength") as TextBox).Text.Trim();
                 int intControlType = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlControlType") as DropDownList).SelectedValue);
@@ -468,9 +487,9 @@ namespace StoryBoard
                 string strErrorCode = (gvPageElements.Rows[i].FindControl("txtErrorCode") as TextBox).Text.Trim();
                 int intStatus = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlStatus") as DropDownList).SelectedValue);
 
-                int bIsKTAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
-                int bIsSNAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
-                int bIsMedicAid = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddllsRequired") as DropDownList).SelectedValue);
+                int bIsKTAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlIsKTAP") as DropDownList).SelectedValue);
+                int bIsSNAP = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlIsSNAP") as DropDownList).SelectedValue);
+                int bIsMedicAid = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlIsMedicaid") as DropDownList).SelectedValue);
                 string bIsOtherPrograms = (gvPageElements.Rows[i].FindControl("txtOtherPrograms") as TextBox).Text;
                 string strDatabaseName = (gvPageElements.Rows[i].FindControl("txtDatabaseTableName") as TextBox).Text.Trim();
                 string strDatabaseFields = (gvPageElements.Rows[i].FindControl("txtDatabaseFields") as TextBox).Text.Trim();
@@ -481,18 +500,29 @@ namespace StoryBoard
                 string strWPDispName = (gvPageElements.Rows[i].FindControl("txtWPDisplayName") as TextBox).Text.Trim();
                 string IAElemID = (gvPageElements.Rows[i].FindControl("IAElemID") as TextBox).Text.Trim();
 
+                int intSSPControlType = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlSSPControlType") as DropDownList).SelectedValue);
+                int bSSPIsRequired = Convert.ToInt32((gvPageElements.Rows[i].FindControl("ddlSSPlsRequired") as DropDownList).SelectedValue);
+                string strSSPDisplayRule = (gvPageElements.Rows[i].FindControl("txtSSPDisplayRule") as TextBox).Text.Trim();
+                string strSSPValidations = (gvPageElements.Rows[i].FindControl("txtSSPValidations") as TextBox).Text.Trim();
+                string strSSPErrorCode = (gvPageElements.Rows[i].FindControl("txtSSPErrorCode") as TextBox).Text.Trim();
+
                 if (strElementName.Trim().Length > 0)
                 {
                     if (elementId == 0)
                     {
                         //insert
 
-                        DataMaster.InsertPageElement(nPageId, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, IAElemID);
+                        DataMaster.InsertPageElement(nPageId, strElementName, strLength, intControlType, bIsRequired, strReferenceTable,
+                            strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP,
+                            bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName,
+                            strWPDispName, IAElemID, intSSPControlType, bSSPIsRequired, strSSPDisplayRule, strSSPValidations, strSSPErrorCode, associd);
                     }
                     else
                     {
                         //update
-                        DataMaster.UpdatePageElement(nPageId, elementId, strElementName, strLength, intControlType, bIsRequired, strReferenceTable, strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms, strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, IAElemID);
+                        DataMaster.UpdatePageElement(nPageId, elementId, strElementName, strLength, intControlType, bIsRequired, strReferenceTable,
+                            strDisplayRule, strValidations, strValidationTrigger, strErrorCode, intStatus, bIsKTAP, bIsSNAP, bIsMedicAid, bIsOtherPrograms,
+                            strDatabaseName, strDatabaseFields, strOpenQuestions, strSSPDispName, strWPDispName, IAElemID, intSSPControlType, bSSPIsRequired, strSSPDisplayRule, strSSPValidations, strSSPErrorCode, associd);
                     }
                 }
             }
@@ -549,7 +579,6 @@ namespace StoryBoard
             ClientScriptManager cs = Page.ClientScript;
             cs.RegisterStartupScript(this.GetType(), "ConfirmSave", "ConfirmElementUpdate()", true);
         }
-
 
         protected void btnDelete_Click(object sender, EventArgs e)
         {

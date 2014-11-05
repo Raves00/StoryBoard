@@ -67,16 +67,19 @@ namespace StoryBoard
 
                 ws.DeleteRow(1, 1, true);
                 int[] cols_to_modify = { 9, 10, 11, 12, 20 };
+                 int rowcnt=0;
+                 int colcnt = 0; 
                 if (ws.Dimension != null && ws2.Dimension != null)
                 {
                     ws.Cells[ws.Dimension.Address].AutoFitColumns();
                     ws2.Cells[ws2.Dimension.Address].AutoFitColumns();
-                    int rowcnt = ws2.Dimension.End.Row;
-                    for (int i = 2; i < rowcnt; i++)
+                    rowcnt= ws2.Dimension.End.Row;
+                    colcnt= ws2.Dimension.End.Column;
+                    for (int i = 2; i <= rowcnt; i++)
                     {
-                        foreach (var col in cols_to_modify)
+                       for (int j = 1; j <= colcnt; j++)
                         {
-                            ws2.Cells[i, col].Value = SBHelper.DecodeData(ws2.Cells[i, col].GetValue<string>());
+                            ws2.Cells[i, j].Value = SBHelper.DecodeData(ws2.Cells[i, j].GetValue<string>() ?? "");
                         }
 
                     }
@@ -87,7 +90,7 @@ namespace StoryBoard
                 range.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
                 range.Style.Font.Color.SetColor(Color.White);
 
-                ExcelRange range2 = ws2.Cells["A1:T1"];
+                ExcelRange range2 = ws2.Cells[1,1,1,colcnt];//ws2.Cells["A1:T1"];
                 range2.Merge = false;
                 range2.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 range2.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);

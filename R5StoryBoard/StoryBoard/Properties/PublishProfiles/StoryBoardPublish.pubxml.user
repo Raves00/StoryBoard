@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit http://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <LastUsedBuildConfiguration>Release</LastUsedBuildConfiguration>
+    <LastUsedPlatform>Any CPU</LastUsedPlatform>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>C:\Purushottam\Projects\Kentucky\Storyboards\StoryBoardApp\</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="AddComponent.aspx">
+      <publishTime>10/28/2014 15:07:38</publishTime>
+    </File>
+    <File Include="AddDataElements.aspx">
+      <publishTime>11/04/2014 21:07:05</publishTime>
+    </File>
+    <File Include="AddPageDetails.aspx">
+      <publishTime>09/18/2014 18:50:13</publishTime>
+    </File>
+    <File Include="AjaxDataProcessor.aspx">
+      <publishTime>09/25/2014 12:43:37</publishTime>
+    </File>
+    <File Include="AuditReport.aspx">
+      <publishTime>10/17/2014 13:04:21</publishTime>
+    </File>
+    <File Include="bin/EPPlus.dll">
+      <publishTime>10/09/2014 12:54:28</publishTime>
+    </File>
+    <File Include="bin/log4net.dll">
+      <publishTime>02/01/2011 14:17:28</publishTime>
+    </File>
+    <File Include="bin/StoryBoard.dll">
+      <publishTime>11/05/2014 13:17:21</publishTime>
+    </File>
+    <File Include="Css/Collapsible.css">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/backbg.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/Calendar.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/DeleteIcon.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/minus.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/plus.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/toggle-expand-alt_blue.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/toggle_collapse_alt.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-bg_flat_0_aaaaaa_40x100.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-bg_flat_55_fbec88_40x100.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-bg_glass_75_d0e5f5_1x400.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-bg_glass_85_dfeffc_1x400.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-bg_glass_95_fef1ec_1x400.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-bg_gloss-wave_55_5c9ccc_500x100.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-bg_inset-hard_100_f5f8f9_1x100.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-bg_inset-hard_100_fcfdfd_1x100.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-icons_217bc0_256x240.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-icons_2e83ff_256x240.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-icons_469bdd_256x240.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-icons_6da8d5_256x240.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-icons_cd0a0a_256x240.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-icons_d8e7f3_256x240.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/Images/ui-icons_f9bd01_256x240.png">
+      <publishTime>10/13/2014 17:50:12</publishTime>
+    </File>
+    <File Include="Css/jquery-ui.css">
+      <publishTime>09/28/2014 22:53:06</publishTime>
+    </File>
+    <File Include="Css/StaticHeader.css">
+      <publishTime>09/19/2014 12:07:35</publishTime>
+    </File>
+    <File Include="Css/styles.css">
+      <publishTime>10/13/2014 17:53:45</publishTime>
+    </File>
+    <File Include="Error.html">
+      <publishTime>10/14/2014 18:17:27</publishTime>
+    </File>
+    <File Include="ExportToExcel.aspx">
+      <publishTime>10/10/2014 12:38:45</publishTime>
+    </File>
+    <File Include="Files/01_AR_Application Registration.xlsx">
+      <publishTime>10/22/2014 15:21:57</publishTime>
+    </File>
+    <File Include="Files/02_DC_Resources_Liquid Assets.xlsx">
+      <publishTime>10/17/2014 13:38:36</publishTime>
+    </File>
+    <File Include="Files/05_DC_Expenses_MAGI Expenses.xlsx">
+      <publishTime>10/28/2014 13:01:02</publishTime>
+    </File>
+    <File Include="Files/05_DC_Expenses_ShelterExpenses.xlsx">
+      <publishTime>10/16/2014 16:39:48</publishTime>
+    </File>
+    <File Include="Files/07_DC_Household_Incarceration.xlsx">
+      <publishTime>10/28/2014 12:49:16</publishTime>
+    </File>
+    <File Include="Files/09_DC_Resources_Vehicle Details.xlsx">
+      <publishTime>10/28/2014 12:49:37</publishTime>
+    </File>
+    <File Include="Files/10_AR_Individual Summary.xlsx">
+      <publishTime>10/27/2014 15:21:28</publishTime>
+    </File>
+    <File Include="Files/14_AR_Program_Application Withdrawal %281%29.xlsx">
+      <publishTime>10/22/2014 19:22:17</publishTime>
+    </File>
+    <File Include="Files/About You and Your Household.xlsx">
+      <publishTime>10/28/2014 17:54:56</publishTime>
+    </File>
+    <File Include="Files/Build Your Household-Member1_Deck1.xlsx">
+      <publishTime>10/22/2014 13:16:27</publishTime>
+    </File>
+    <File Include="Files/Build Your Household-Member1_Deck2.xlsx">
+      <publishTime>10/22/2014 13:16:47</publishTime>
+    </File>
+    <File Include="Files/Build Your Household-Member2_Deck1.xlsx">
+      <publishTime>10/28/2014 14:23:14</publishTime>
+    </File>
+    <File Include="Files/Build Your Household-Member2_Deck2 - Copy.xlsx">
+      <publishTime>10/22/2014 16:55:24</publishTime>
+    </File>
+    <File Include="Files/Build_Your_Household-Household Members.xlsx">
+      <publishTime>10/28/2014 17:56:23</publishTime>
+    </File>
+    <File Include="Files/Pre-Screening_Options.xlsx">
+      <publishTime>10/22/2014 20:14:21</publishTime>
+    </File>
+    <File Include="Files/Primary Applicant Contact Information.xlsx">
+      <publishTime>10/17/2014 13:39:15</publishTime>
+    </File>
+    <File Include="Files/Quick Pre-Screening.xlsx">
+      <publishTime>10/22/2014 20:32:46</publishTime>
+    </File>
+    <File Include="Files/Your Financial Information - Copy.xlsx">
+      <publishTime>10/27/2014 20:46:09</publishTime>
+    </File>
+    <File Include="Files/Your Financial Information.xlsx">
+      <publishTime>10/27/2014 20:40:06</publishTime>
+    </File>
+    <File Include="Files/Your Results.xlsx">
+      <publishTime>10/22/2014 20:33:14</publishTime>
+    </File>
+    <File Include="GenerateReports.aspx">
+      <publishTime>09/19/2014 14:10:24</publishTime>
+    </File>
+    <File Include="GetScreenImage.ashx">
+      <publishTime>09/18/2014 15:07:37</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>10/14/2014 15:34:15</publishTime>
+    </File>
+    <File Include="GlobalMaster.Master">
+      <publishTime>10/28/2014 12:26:04</publishTime>
+    </File>
+    <File Include="Images/backbg.png">
+      <publishTime>09/18/2014 16:14:34</publishTime>
+    </File>
+    <File Include="Images/Calendar.png">
+      <publishTime>10/10/2014 13:45:54</publishTime>
+    </File>
+    <File Include="Images/DeleteIcon.png">
+      <publishTime>09/18/2014 15:00:21</publishTime>
+    </File>
+    <File Include="Images/minus.png">
+      <publishTime>10/13/2014 18:28:18</publishTime>
+    </File>
+    <File Include="Images/plus.png">
+      <publishTime>10/13/2014 18:28:18</publishTime>
+    </File>
+    <File Include="Images/toggle-expand-alt_blue.png">
+      <publishTime>10/09/2014 18:50:09</publishTime>
+    </File>
+    <File Include="Images/toggle_collapse_alt.png">
+      <publishTime>10/09/2014 18:50:09</publishTime>
+    </File>
+    <File Include="Images/ui-bg_flat_0_aaaaaa_40x100.png">
+      <publishTime>09/30/2014 14:41:00</publishTime>
+    </File>
+    <File Include="Images/ui-bg_flat_55_fbec88_40x100.png">
+      <publishTime>09/30/2014 14:41:00</publishTime>
+    </File>
+    <File Include="Images/ui-bg_glass_75_d0e5f5_1x400.png">
+      <publishTime>09/30/2014 14:41:00</publishTime>
+    </File>
+    <File Include="Images/ui-bg_glass_85_dfeffc_1x400.png">
+      <publishTime>09/30/2014 14:41:00</publishTime>
+    </File>
+    <File Include="Images/ui-bg_glass_95_fef1ec_1x400.png">
+      <publishTime>09/30/2014 14:41:00</publishTime>
+    </File>
+    <File Include="Images/ui-bg_gloss-wave_55_5c9ccc_500x100.png">
+      <publishTime>09/30/2014 14:40:55</publishTime>
+    </File>
+    <File Include="Images/ui-bg_inset-hard_100_f5f8f9_1x100.png">
+      <publishTime>09/30/2014 14:40:55</publishTime>
+    </File>
+    <File Include="Images/ui-bg_inset-hard_100_fcfdfd_1x100.png">
+      <publishTime>09/30/2014 14:40:55</publishTime>
+    </File>
+    <File Include="Images/ui-icons_217bc0_256x240.png">
+      <publishTime>09/30/2014 14:41:00</publishTime>
+    </File>
+    <File Include="Images/ui-icons_2e83ff_256x240.png">
+      <publishTime>09/30/2014 14:40:55</publishTime>
+    </File>
+    <File Include="Images/ui-icons_469bdd_256x240.png">
+      <publishTime>09/30/2014 14:41:00</publishTime>
+    </File>
+    <File Include="Images/ui-icons_6da8d5_256x240.png">
+      <publishTime>09/30/2014 14:40:55</publishTime>
+    </File>
+    <File Include="Images/ui-icons_cd0a0a_256x240.png">
+      <publishTime>09/30/2014 14:41:00</publishTime>
+    </File>
+    <File Include="Images/ui-icons_d8e7f3_256x240.png">
+      <publishTime>09/30/2014 14:41:00</publishTime>
+    </File>
+    <File Include="Images/ui-icons_f9bd01_256x240.png">
+      <publishTime>09/30/2014 14:41:00</publishTime>
+    </File>
+    <File Include="ImportExport.aspx">
+      <publishTime>11/05/2014 13:01:16</publishTime>
+    </File>
+    <File Include="Login.aspx">
+      <publishTime>10/07/2014 16:08:42</publishTime>
+    </File>
+    <File Include="ReferenceTablesReport.aspx">
+      <publishTime>10/16/2014 13:00:43</publishTime>
+    </File>
+    <File Include="ScreenImages.aspx">
+      <publishTime>10/24/2014 20:04:04</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.11.1.min.js">
+      <publishTime>09/25/2014 12:30:04</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.4.1.min.js">
+      <publishTime>09/17/2014 17:43:16</publishTime>
+    </File>
+    <File Include="Scripts/jquery-ui.min.js">
+      <publishTime>09/25/2014 17:57:32</publishTime>
+    </File>
+    <File Include="Scripts/jquery.collapsible.js">
+      <publishTime>10/13/2014 17:49:40</publishTime>
+    </File>
+    <File Include="Scripts/jquery.cookie.js">
+      <publishTime>10/13/2014 17:49:40</publishTime>
+    </File>
+    <File Include="Scripts/knockout-3.2.0.js">
+      <publishTime>09/25/2014 14:40:03</publishTime>
+    </File>
+    <File Include="Scripts/knockout.mapping.js">
+      <publishTime>09/25/2014 14:51:10</publishTime>
+    </File>
+    <File Include="Scripts/ScrollableGridPlugin.js">
+      <publishTime>09/17/2014 17:43:16</publishTime>
+    </File>
+    <File Include="Scripts/x.js">
+      <publishTime>09/17/2014 19:31:04</publishTime>
+    </File>
+    <File Include="Scripts/xtableheaderfixed.js">
+      <publishTime>09/17/2014 20:01:04</publishTime>
+    </File>
+    <File Include="SearchElements.aspx">
+      <publishTime>11/05/2014 12:39:35</publishTime>
+    </File>
+    <File Include="SearchPage.ascx">
+      <publishTime>10/26/2014 18:22:14</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>11/05/2014 13:19:14</publishTime>
+    </File>
+  </ItemGroup>
+</Project>
